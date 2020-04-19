@@ -1,15 +1,15 @@
 package com.yanbin.ybaccouting
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yanbin.ybaccouting.data.AccountingDatabase
-import com.yanbin.ybaccouting.data.TransactionModel
+import com.yanbin.ybaccouting.data.TransactionRepository
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         MainScope().launch {
-            initDatabase()
-            //loadData
             val transactions = getTransactions()
 
             withContext(Dispatchers.Main) {
@@ -37,24 +35,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun initDatabase() {
-        withContext(Dispatchers.IO) {
-            val db = AccountingDatabase.getDatabase(this@MainActivity)
-//            val transactionDao = db.getTransactionDao()
-//            transactionDao.addTransaction(TransactionModel().apply {
-//                name = "breakfast"
-//                total = 1000
-//                withDraw = 100
-//            })
-        }
-    }
-
     private suspend fun getTransactions(): List<Transaction> {
         return withContext(Dispatchers.IO) {
-            val db = AccountingDatabase.getDatabase(this@MainActivity)
-            val transactionDao = db.getTransactionDao()
-            transactionDao.getAll()
-                .map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name) }
+            val repository = get<TransactionRepository>()
+            repository.getAll()
         }
     }
 }

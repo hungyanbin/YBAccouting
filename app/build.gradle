@@ -41,6 +41,9 @@ dependencies {
     annotationProcessor 'androidx.room:room-compiler:2.2.5'
     kapt 'androidx.room:room-compiler:2.2.5'
 
+    //koin
+    implementation "org.koin:koin-androidx-scope:2.1.5"
+
     //test
     testImplementation 'junit:junit:4.12'
 }

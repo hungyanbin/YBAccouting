@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.yanbin.ybaccouting.data.AccountingDatabase
-import com.yanbin.ybaccouting.data.TransactionModel
+import com.yanbin.ybaccouting.data.TransactionRepository
 import com.yanbin.ybaccouting.utils.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.dialog_new_transaction.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
+import org.koin.android.ext.android.get
 
 class AddTransactionDialog : DialogFragment() {
 
@@ -38,11 +37,12 @@ class AddTransactionDialog : DialogFragment() {
                     else -> throw RuntimeException("Illegale button!!")
                 }
 
-                val transferModel = TransactionModel().apply {
-                    this.name = name
-                    this.deposit = if(transferMode == "Deposit") amount else 0
-                    this.withDraw = if(transferMode == "WithDraw") amount else 0
-                }
+                val transferModel = Transaction(
+                    name = name,
+                    deposit = if(transferMode == "Deposit") amount else 0,
+                    withDraw = if(transferMode == "WithDraw") amount else 0,
+                    total = 0
+                )
 
                 MainScope().launch {
                     insertTransaction(transferModel)
@@ -52,10 +52,9 @@ class AddTransactionDialog : DialogFragment() {
         }
     }
 
-    private suspend fun insertTransaction(transactionModel: TransactionModel) {
-        val db = AccountingDatabase.getDatabase(this.context!!)
-        val transactionDao = db.getTransactionDao()
-        transactionDao.addTransaction(transactionModel)
+    private suspend fun insertTransaction(transaction: Transaction) {
+        val repository = get<TransactionRepository>()
+        repository.add(transaction)
     }
 
     private fun isNameNotEmpty(): Boolean {
