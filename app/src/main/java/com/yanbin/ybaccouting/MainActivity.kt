@@ -21,6 +21,10 @@ class MainActivity : AppCompatActivity() {
         recyclerTransaction.adapter = transactionAdapter
         recyclerTransaction.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false)
 
+        btnAddTransaction.setOnClickListener {
+            AddTransactionDialog().show(supportFragmentManager, "")
+        }
+
         MainScope().launch {
             initDatabase()
             //loadData
@@ -36,12 +40,12 @@ class MainActivity : AppCompatActivity() {
     private suspend fun initDatabase() {
         withContext(Dispatchers.IO) {
             val db = AccountingDatabase.getDatabase(this@MainActivity)
-            val transactionDao = db.getTransactionDao()
-            transactionDao.addTransaction(TransactionModel().apply {
-                name = "breakfast"
-                total = 1000
-                withDraw = 100
-            })
+//            val transactionDao = db.getTransactionDao()
+//            transactionDao.addTransaction(TransactionModel().apply {
+//                name = "breakfast"
+//                total = 1000
+//                withDraw = 100
+//            })
         }
     }
 
@@ -53,10 +57,4 @@ class MainActivity : AppCompatActivity() {
                 .map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name) }
         }
     }
-
-    private val fakeData = listOf(
-        Transaction(total = 1000, deposit = 100, withDraw = 0, name = "breakfast"),
-        Transaction(total = 1100, deposit = 100, withDraw = 0, name = "lunch"),
-        Transaction(total = 1200, deposit = 100, withDraw = 0, name = "dinner")
-    )
 }
