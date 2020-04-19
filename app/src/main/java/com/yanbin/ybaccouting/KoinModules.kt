@@ -3,6 +3,7 @@ package com.yanbin.ybaccouting
 import com.yanbin.ybaccouting.data.AccountingDatabase
 import com.yanbin.ybaccouting.data.RoomTransactionRepository
 import com.yanbin.ybaccouting.data.TransactionRepository
+import com.yanbin.ybaccouting.domain.AccountingService
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -14,4 +15,6 @@ val accountingModule = module {
     factory<TransactionRepository> {
         RoomTransactionRepository(get())
     }
+
+    factory { AccountingService(get()) }
 }

@@ -23,4 +23,12 @@ class RoomTransactionRepository(
             }
         )
     }
+
+    override suspend fun getCurrentTotal(): Int {
+        return try {
+            dao.getCurrentTotal()
+        } catch (e: Throwable) {
+            0
+        }
+    }
 }

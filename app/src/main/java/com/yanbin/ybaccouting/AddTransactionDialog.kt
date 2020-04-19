@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.yanbin.ybaccouting.data.TransactionRepository
+import com.yanbin.ybaccouting.domain.AccountingService
 import com.yanbin.ybaccouting.utils.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.dialog_new_transaction.*
 import kotlinx.coroutines.MainScope
@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
 class AddTransactionDialog : DialogFragment() {
+
+    private val service = get<AccountingService>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,24 +39,15 @@ class AddTransactionDialog : DialogFragment() {
                     else -> throw RuntimeException("Illegale button!!")
                 }
 
-                val transferModel = Transaction(
-                    name = name,
-                    deposit = if(transferMode == "Deposit") amount else 0,
-                    withDraw = if(transferMode == "WithDraw") amount else 0,
-                    total = 0
-                )
-
                 MainScope().launch {
-                    insertTransaction(transferModel)
+                    when(transferMode) {
+                        "Deposit" -> service.addDeposit(name, amount)
+                        "WithDraw" -> service.addWithdraw(name, amount)
+                    }
                     dismiss()
                 }
             }
         }
-    }
-
-    private suspend fun insertTransaction(transaction: Transaction) {
-        val repository = get<TransactionRepository>()
-        repository.add(transaction)
     }
 
     private fun isNameNotEmpty(): Boolean {

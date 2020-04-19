@@ -3,7 +3,7 @@ package com.yanbin.ybaccouting
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.yanbin.ybaccouting.data.TransactionRepository
+import com.yanbin.ybaccouting.domain.AccountingService
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
     private suspend fun getTransactions(): List<Transaction> {
         return withContext(Dispatchers.IO) {
-            val repository = get<TransactionRepository>()
-            repository.getAll()
+            val service = get<AccountingService>()
+            service.getAllTransactions()
         }
     }
 }
