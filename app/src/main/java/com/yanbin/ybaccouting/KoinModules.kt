@@ -16,5 +16,5 @@ val accountingModule = module {
         RoomTransactionRepository(get())
     }
 
-    factory { AccountingService(get()) }
+    single { AccountingService(get()) }
 }

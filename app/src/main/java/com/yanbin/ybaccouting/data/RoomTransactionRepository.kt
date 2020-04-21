@@ -1,6 +1,8 @@
 package com.yanbin.ybaccouting.data
 
 import com.yanbin.ybaccouting.Transaction
+import kotlinx.coroutines.flow.*
+import java.lang.RuntimeException
 
 class RoomTransactionRepository(
     accountingDatabase: AccountingDatabase
@@ -8,9 +10,12 @@ class RoomTransactionRepository(
 
     private val dao = accountingDatabase.getTransactionDao()
 
-    override suspend fun getAll(): List<Transaction> {
+    override fun getAll(): Flow<List<Transaction>> {
         return dao.getAll()
-            .map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name) }
+            .map { models ->
+                models.map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name) }
+            }
+
     }
 
     override suspend fun add(transaction: Transaction) {
@@ -24,11 +29,8 @@ class RoomTransactionRepository(
         )
     }
 
-    override suspend fun getCurrentTotal(): Int {
-        return try {
-            dao.getCurrentTotal()
-        } catch (e: Throwable) {
-            0
-        }
+    override fun getCurrentTotal(): Flow<Int> {
+        return dao.getLastTransaction()
+            .map { it?.total ?: 0 }
     }
 }

@@ -1,6 +1,8 @@
 package com.yanbin.ybaccouting.domain
 
 import com.yanbin.ybaccouting.Transaction
+import com.yanbin.ybaccouting.test
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -18,10 +20,9 @@ class AccountingServiceTest {
             val accountingService = AccountingService(fakeRepository)
 
             //act & assert
-            val transactions = accountingService.getAllTransactions()
-
-            assertThat(transactions)
-                .isEqualTo(fakeData)
+            accountingService.getAllTransactions()
+                .test(this)
+                .assertValues(fakeData)
         }
     }
 
@@ -32,13 +33,11 @@ class AccountingServiceTest {
             val accountingService = AccountingService(fakeRepository)
 
             accountingService.addWithdraw("lunch", 100)
+                .collect {  }
 
             //assert
-            val transactions = accountingService.getAllTransactions()
-            assertThat(transactions)
-                .contains(
-                    Transaction(total = 900, withDraw = 100, deposit = 0, name = "lunch")
-                )
+            assertThat(fakeRepository.lastedAddedTransaction)
+                .isEqualTo(Transaction(total = 900, withDraw = 100, deposit = 0, name = "lunch"))
         }
     }
 
@@ -49,13 +48,11 @@ class AccountingServiceTest {
             val accountingService = AccountingService(fakeRepository)
 
             accountingService.addDeposit("part time", 100)
+                .collect {  }
 
             //assert
-            val transactions = accountingService.getAllTransactions()
-            assertThat(transactions)
-                .contains(
-                    Transaction(total = 1100, withDraw = 0, deposit = 100, name = "part time")
-                )
+            assertThat(fakeRepository.lastedAddedTransaction)
+                .isEqualTo(Transaction(total = 1100, withDraw = 0, deposit = 100, name = "part time"))
         }
     }
 }

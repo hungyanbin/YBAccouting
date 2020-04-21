@@ -1,9 +1,10 @@
 package com.yanbin.ybaccouting.data
 
 import com.yanbin.ybaccouting.Transaction
+import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
-    suspend fun getAll(): List<Transaction>
-    suspend fun getCurrentTotal(): Int
+    fun getAll(): Flow<List<Transaction>>
+    fun getCurrentTotal(): Flow<Int>
     suspend fun add(transaction: Transaction)
 }

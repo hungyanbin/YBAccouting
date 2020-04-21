@@ -9,6 +9,8 @@ import com.yanbin.ybaccouting.domain.AccountingService
 import com.yanbin.ybaccouting.utils.isNotNullOrEmpty
 import kotlinx.android.synthetic.main.dialog_new_transaction.*
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 
@@ -41,8 +43,8 @@ class AddTransactionDialog : DialogFragment() {
 
                 MainScope().launch {
                     when(transferMode) {
-                        "Deposit" -> service.addDeposit(name, amount)
-                        "WithDraw" -> service.addWithdraw(name, amount)
+                        "Deposit" -> service.addDeposit(name, amount).collect()
+                        "WithDraw" -> service.addWithdraw(name, amount).collect()
                     }
                     dismiss()
                 }

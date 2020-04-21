@@ -5,10 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yanbin.ybaccouting.domain.AccountingService
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.get
 
 class MainActivity : AppCompatActivity() {
@@ -26,19 +25,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         MainScope().launch {
-            val transactions = getTransactions()
-
-            withContext(Dispatchers.Main) {
-                transactionAdapter.transactions.addAll(transactions)
-                transactionAdapter.notifyDataSetChanged()
-            }
-        }
-    }
-
-    private suspend fun getTransactions(): List<Transaction> {
-        return withContext(Dispatchers.IO) {
             val service = get<AccountingService>()
             service.getAllTransactions()
+                .collect { transactions ->
+                    transactionAdapter.transactions.clear()
+                    transactionAdapter.transactions.addAll(transactions)
+                    transactionAdapter.notifyDataSetChanged() }
         }
     }
+
 }
