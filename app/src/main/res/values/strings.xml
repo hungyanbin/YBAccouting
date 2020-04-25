@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">YBAccouting</string>
-    <string name="cta_done">完成</string>
-    <string name="transaction_title">新增交易</string>
-    <string name="transaction_name">名稱</string>
-    <string name="transaction_deposit">存入</string>
-    <string name="transaction_withdraw">轉出</string>
-    <string name="transaction_money">金額</string>
+    <string name="cta_done">Done</string>
+    <string name="home_total_title">Current Available</string>
+    <string name="transaction_title">New Transaction</string>
+    <string name="transaction_name">Name</string>
+    <string name="transaction_deposit">Deposit</string>
+    <string name="transaction_withdraw">Withdraw</string>
+    <string name="transaction_money">Amount</string>
 </resources>

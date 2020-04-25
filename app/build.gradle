@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
     //room
     implementation 'androidx.room:room-runtime:2.2.5'
@@ -45,6 +46,7 @@ dependencies {
 
     //koin
     implementation "org.koin:koin-androidx-scope:2.1.5"
+    implementation "org.koin:koin-android-viewmodel:2.1.5"
 
     //Date time
     implementation "com.soywiz.korlibs.klock:klock:1.7.3"
