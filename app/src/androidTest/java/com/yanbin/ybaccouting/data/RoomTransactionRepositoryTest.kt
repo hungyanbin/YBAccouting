@@ -3,6 +3,8 @@ package com.yanbin.ybaccouting.data
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.soywiz.klock.DateTime
+import com.yanbin.ybaccouting.Transaction
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -17,11 +19,13 @@ import org.junit.runner.RunWith
 class RoomTransactionRepositoryTest {
 
     private lateinit var database: AccountingDatabase
+    private lateinit var repository: RoomTransactionRepository
 
     @Before
     fun setUp() {
         database = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().context,
             AccountingDatabase::class.java).build()
+        repository = RoomTransactionRepository(database)
     }
 
     @After
@@ -32,48 +36,54 @@ class RoomTransactionRepositoryTest {
     @Test
     fun insertAndGetAll() {
         runBlocking {
-            val dao = database.getTransactionDao()
+            repository.add(Transaction(
+                total = 1000,
+                withDraw = 40,
+                deposit = 0,
+                name = "lunch",
+                recordTime = DateTime(2012, 4, 23, 12, 23, 59)
+            ))
 
-            //yyyy-MM-dd'T'HH:mm:ssXXX
-            dao.addTransaction(TransactionModel().apply {
-                total = 1000
-                withDraw = 40
-                name = "lunch"
-                dateTime = "2012-04-23T12:23:59"
-            })
-
-            val allTransactions = dao.getAll()
+            val allTransactions = repository.getAll()
                 .take(1)
                 .toList().first()
             Assert.assertEquals(1, allTransactions.size)
-            Assert.assertEquals(1L, allTransactions[0].id)
             Assert.assertEquals("lunch", allTransactions[0].name)
             Assert.assertEquals(1000, allTransactions[0].total)
             Assert.assertEquals(40, allTransactions[0].withDraw)
-            Assert.assertEquals("2012-04-23T12:23:59", allTransactions[0].dateTime)
+            Assert.assertEquals(DateTime(2012, 4, 23, 12, 23, 59), allTransactions[0].recordTime)
         }
     }
 
 
     @Test
-    fun insertAndGetLastTransaction() {
+    fun getCurrentTotalFromLastTransaction() {
         runBlocking {
-            val dao = database.getTransactionDao()
+            repository.add(Transaction(
+                total = 1000,
+                withDraw = 40,
+                deposit = 0,
+                name = "lunch",
+                recordTime = DateTime(2012, 4, 23, 12, 23, 59)
+            ))
+            repository.add(Transaction(
+                total = 1900,
+                withDraw = 0,
+                deposit = 78,
+                name = "dinner",
+                recordTime = DateTime(2020, 4, 23, 12, 34, 56)
+            ))
 
-            dao.addTransaction(TransactionModel().apply {
-                total = 1000
-                withDraw = 40
-                name = "lunch"
-                dateTime = "2012-04-23T12:23:59"
-            })
+            val total = repository.getCurrentTotal()
+            Assert.assertEquals(1900, total)
+        }
+    }
 
-            val lastTransaction = dao.getLastTransaction()
-            Assert.assertNotNull(lastTransaction)
-            Assert.assertEquals(1L, lastTransaction!!.id)
-            Assert.assertEquals("lunch", lastTransaction!!.name)
-            Assert.assertEquals(1000, lastTransaction!!.total)
-            Assert.assertEquals(40, lastTransaction!!.withDraw)
-            Assert.assertEquals("2012-04-23T12:23:59", lastTransaction.dateTime)
+    @Test
+    fun getCurrentTotalFromEmptyDataBaseShouldReturnZero() {
+        runBlocking {
+            val total = repository.getCurrentTotal()
+            Assert.assertEquals(0, total)
         }
     }
 }
