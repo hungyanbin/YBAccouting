@@ -13,7 +13,7 @@ class RoomTransactionRepository(
     override fun getAll(): Flow<List<Transaction>> {
         return dao.getAll()
             .map { models ->
-                models.map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name) }
+                models.map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name, model.dateTime) }
             }
 
     }

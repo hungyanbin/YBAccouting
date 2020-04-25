@@ -5,8 +5,6 @@ import com.yanbin.ybaccouting.data.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -23,7 +21,7 @@ class AccountingService(
         val newTotal = currentTotal - amount
 
         transactionRepository.add(
-            Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name)
+            Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name, recordTime = "TODO get current time")
         )
     }
 
@@ -32,7 +30,7 @@ class AccountingService(
         val newTotal = currentTotal + amount
 
         transactionRepository.add(
-            Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name)
+            Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name, recordTime = "TODO get current time")
         )
     }
 }

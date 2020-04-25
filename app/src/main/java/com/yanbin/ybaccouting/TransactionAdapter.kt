@@ -6,31 +6,31 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TransactionAdapter : RecyclerView.Adapter<TransationViewHolder>() {
+class TransactionAdapter : RecyclerView.Adapter<TransactionViewHolder>() {
 
     val transactions: MutableList<Transaction> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransationViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.item_transaction, parent, false)
-        return TransationViewHolder(view)
+        return TransactionViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return transactions.size
     }
 
-    override fun onBindViewHolder(holder: TransationViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactions[position]
         holder.bind(transaction)
     }
 }
 
-class TransationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+class TransactionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     private val textName = itemView.findViewById<AppCompatTextView>(R.id.textName)
     private val textMoneyDiff= itemView.findViewById<AppCompatTextView>(R.id.textMoneyDiff)
-    private val textTotal = itemView.findViewById<AppCompatTextView>(R.id.textTime)
+    private val textTime = itemView.findViewById<AppCompatTextView>(R.id.textTime)
 
     fun bind(transaction: Transaction) {
         textName.text = transaction.name
@@ -39,6 +39,6 @@ class TransationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         } else {
             "-" + transaction.withDraw
         }
-        textTotal.text = transaction.total.toString()
+        textTime.text = transaction.recordTime
     }
 }

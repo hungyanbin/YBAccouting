@@ -13,7 +13,6 @@ class TransactionModel{
     var total: Int = 0
     var deposit: Int = 0
     var withDraw: Int = 0
-
-    @NonNull
-    var name: String = ""
+    @NonNull var dateTime: String = ""
+    @NonNull var name: String = ""
 }

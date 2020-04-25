@@ -2,7 +2,6 @@ package com.yanbin.ybaccouting.domain
 
 import com.yanbin.ybaccouting.Transaction
 import com.yanbin.ybaccouting.test
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -10,7 +9,7 @@ import org.junit.Test
 class AccountingServiceTest {
 
     private val fakeData = mutableListOf(
-        Transaction(name = "breakfast", withDraw = 55, deposit = 0, total = 1000)
+        Transaction(name = "breakfast", withDraw = 55, deposit = 0, total = 1000, recordTime = "Today")
     )
 
     @Test
@@ -36,7 +35,7 @@ class AccountingServiceTest {
 
             //assert
             assertThat(fakeRepository.lastedAddedTransaction)
-                .isEqualTo(Transaction(total = 900, withDraw = 100, deposit = 0, name = "lunch"))
+                .isEqualTo(Transaction(total = 900, withDraw = 100, deposit = 0, name = "lunch", recordTime = "Today"))
         }
     }
 
@@ -50,7 +49,7 @@ class AccountingServiceTest {
 
             //assert
             assertThat(fakeRepository.lastedAddedTransaction)
-                .isEqualTo(Transaction(total = 1100, withDraw = 0, deposit = 100, name = "part time"))
+                .isEqualTo(Transaction(total = 1100, withDraw = 0, deposit = 100, name = "part time", recordTime = "Today"))
         }
     }
 }
