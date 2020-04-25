@@ -46,6 +46,9 @@ dependencies {
     //koin
     implementation "org.koin:koin-androidx-scope:2.1.5"
 
+    //Date time
+    implementation "com.soywiz.korlibs.klock:klock:1.7.3"
+
     //test
     testImplementation 'junit:junit:4.12'
     testImplementation "org.assertj:assertj-core:3.11.1"

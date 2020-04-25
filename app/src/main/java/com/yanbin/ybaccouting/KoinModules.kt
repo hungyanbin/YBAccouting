@@ -1,5 +1,6 @@
 package com.yanbin.ybaccouting
 
+import com.soywiz.klock.TimeProvider
 import com.yanbin.ybaccouting.data.AccountingDatabase
 import com.yanbin.ybaccouting.data.RoomTransactionRepository
 import com.yanbin.ybaccouting.data.TransactionRepository
@@ -16,5 +17,5 @@ val accountingModule = module {
         RoomTransactionRepository(get())
     }
 
-    single { AccountingService(get()) }
+    single { AccountingService(get(), TimeProvider) }
 }

@@ -1,5 +1,6 @@
 package com.yanbin.ybaccouting.domain
 
+import com.soywiz.klock.TimeProvider
 import com.yanbin.ybaccouting.Transaction
 import com.yanbin.ybaccouting.data.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -9,7 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @FlowPreview
 @ExperimentalCoroutinesApi
 class AccountingService(
-    private val transactionRepository: TransactionRepository
+    private val transactionRepository: TransactionRepository,
+    private val timeProvider: TimeProvider
 ) {
 
     fun getAllTransactions(): Flow<List<Transaction>> {
@@ -21,7 +23,7 @@ class AccountingService(
         val newTotal = currentTotal - amount
 
         transactionRepository.add(
-            Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name, recordTime = "TODO get current time")
+            Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name, recordTime = timeProvider.now())
         )
     }
 
@@ -30,7 +32,7 @@ class AccountingService(
         val newTotal = currentTotal + amount
 
         transactionRepository.add(
-            Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name, recordTime = "TODO get current time")
+            Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name, recordTime = timeProvider.now())
         )
     }
 }

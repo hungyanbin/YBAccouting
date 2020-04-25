@@ -34,10 +34,12 @@ class RoomTransactionRepositoryTest {
         runBlocking {
             val dao = database.getTransactionDao()
 
+            //yyyy-MM-dd'T'HH:mm:ssXXX
             dao.addTransaction(TransactionModel().apply {
                 total = 1000
                 withDraw = 40
                 name = "lunch"
+                dateTime = "2012-04-23T12:23:59"
             })
 
             val allTransactions = dao.getAll()
@@ -48,8 +50,10 @@ class RoomTransactionRepositoryTest {
             Assert.assertEquals("lunch", allTransactions[0].name)
             Assert.assertEquals(1000, allTransactions[0].total)
             Assert.assertEquals(40, allTransactions[0].withDraw)
+            Assert.assertEquals("2012-04-23T12:23:59", allTransactions[0].dateTime)
         }
     }
+
 
     @Test
     fun insertAndGetLastTransaction() {
@@ -60,6 +64,7 @@ class RoomTransactionRepositoryTest {
                 total = 1000
                 withDraw = 40
                 name = "lunch"
+                dateTime = "2012-04-23T12:23:59"
             })
 
             val lastTransaction = dao.getLastTransaction()
@@ -68,6 +73,7 @@ class RoomTransactionRepositoryTest {
             Assert.assertEquals("lunch", lastTransaction!!.name)
             Assert.assertEquals(1000, lastTransaction!!.total)
             Assert.assertEquals(40, lastTransaction!!.withDraw)
+            Assert.assertEquals("2012-04-23T12:23:59", lastTransaction.dateTime)
         }
     }
 }

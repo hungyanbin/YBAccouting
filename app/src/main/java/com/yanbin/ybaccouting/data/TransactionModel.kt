@@ -15,4 +15,8 @@ class TransactionModel{
     var withDraw: Int = 0
     @NonNull var dateTime: String = ""
     @NonNull var name: String = ""
+
+    companion object {
+        const val INVALID_DATETIME = "NaN"
+    }
 }

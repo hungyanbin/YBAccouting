@@ -39,6 +39,6 @@ class TransactionViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         } else {
             "-" + transaction.withDraw
         }
-        textTime.text = transaction.recordTime
+        textTime.text = transaction.recordTime.toString("dd MMM H:mm")
     }
 }

@@ -1,5 +1,7 @@
 package com.yanbin.ybaccouting.data
 
+import com.soywiz.klock.DateFormat
+import com.soywiz.klock.DateTime
 import com.yanbin.ybaccouting.Transaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,9 +15,22 @@ class RoomTransactionRepository(
     override fun getAll(): Flow<List<Transaction>> {
         return dao.getAll()
             .map { models ->
-                models.map { model -> Transaction(model.total, model.deposit, model.withDraw, model.name, model.dateTime) }
-            }
+                models.map { model ->
+                    val recordTime = if (model.dateTime == TransactionModel.INVALID_DATETIME) {
+                        DateTime.EPOCH
+                    } else {
+                        DateTime.parse(model.dateTime).local
+                    }
 
+                    Transaction(
+                        model.total,
+                        model.deposit,
+                        model.withDraw,
+                        model.name,
+                        recordTime
+                    )
+                }
+            }
     }
 
     override suspend fun add(transaction: Transaction) {
@@ -25,6 +40,7 @@ class RoomTransactionRepository(
                 this.deposit = transaction.deposit
                 this.total = transaction.total
                 this.name = transaction.name
+                this.dateTime = transaction.recordTime.format(DateFormat.FORMAT1)
             }
         )
     }

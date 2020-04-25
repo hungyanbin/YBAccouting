@@ -13,7 +13,7 @@ abstract class AccountingDatabase : RoomDatabase() {
     abstract fun getTransactionDao(): TransactionDAO
 
     companion object {
-        private const val DATABASE_NAME = "accouting_database"
+        private const val DATABASE_NAME = "accounting_database"
 
         fun getDatabase(context: Context): AccountingDatabase {
             return Room.databaseBuilder(
