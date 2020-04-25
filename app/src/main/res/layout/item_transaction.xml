@@ -2,42 +2,52 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imageCategory"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@color/colorAccent"
+        android:layout_width="15dp"
+        android:layout_height="15dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/textMoneyDiff"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+        android:textColor="@color/textTitle"
+        app:layout_constraintStart_toEndOf="@id/imageCategory"
+        app:layout_constraintEnd_toStartOf="@id/textMoneyDiff"
         app:layout_constraintTop_toTopOf="parent"
-        android:textAlignment="viewEnd"
-        tools:text="name" />
+        tools:text="BREAKFAST" />
+
+    <TextView
+        android:id="@+id/textTime"
+        app:layout_constraintStart_toStartOf="@id/textName"
+        app:layout_constraintTop_toBottomOf="@id/textName"
+        android:layout_marginTop="8dp"
+        tools:text="TODAY 06:00am"
+        android:textColor="@color/textSub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textMoneyDiff"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/textTotal"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textName"
+        android:textColor="@color/textTitle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="viewEnd"
         tools:text="-100" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textTotal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="viewEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textMoneyDiff"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="1,100" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

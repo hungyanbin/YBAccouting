@@ -30,12 +30,12 @@ class TransationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     private val textName = itemView.findViewById<AppCompatTextView>(R.id.textName)
     private val textMoneyDiff= itemView.findViewById<AppCompatTextView>(R.id.textMoneyDiff)
-    private val textTotal = itemView.findViewById<AppCompatTextView>(R.id.textTotal)
+    private val textTotal = itemView.findViewById<AppCompatTextView>(R.id.textTime)
 
     fun bind(transaction: Transaction) {
         textName.text = transaction.name
         textMoneyDiff.text = if (transaction.deposit > 0) {
-            transaction.deposit.toString()
+            "+" + transaction.deposit.toString()
         } else {
             "-" + transaction.withDraw
         }

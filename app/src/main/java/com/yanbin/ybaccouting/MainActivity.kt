@@ -2,6 +2,7 @@ package com.yanbin.ybaccouting
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yanbin.ybaccouting.domain.AccountingService
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         val transactionAdapter = TransactionAdapter()
         recyclerTransaction.adapter = transactionAdapter
         recyclerTransaction.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false)
+        recyclerTransaction.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         btnAddTransaction.setOnClickListener {
             AddTransactionDialog().show(supportFragmentManager, "")
