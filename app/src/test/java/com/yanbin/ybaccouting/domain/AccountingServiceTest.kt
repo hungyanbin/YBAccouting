@@ -33,7 +33,6 @@ class AccountingServiceTest {
             val accountingService = AccountingService(fakeRepository)
 
             accountingService.addWithdraw("lunch", 100)
-                .collect {  }
 
             //assert
             assertThat(fakeRepository.lastedAddedTransaction)
@@ -48,7 +47,6 @@ class AccountingServiceTest {
             val accountingService = AccountingService(fakeRepository)
 
             accountingService.addDeposit("part time", 100)
-                .collect {  }
 
             //assert
             assertThat(fakeRepository.lastedAddedTransaction)

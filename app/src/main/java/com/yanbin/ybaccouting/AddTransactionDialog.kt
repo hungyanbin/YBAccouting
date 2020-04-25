@@ -43,8 +43,8 @@ class AddTransactionDialog : DialogFragment() {
 
                 MainScope().launch {
                     when(transferMode) {
-                        "Deposit" -> service.addDeposit(name, amount).collect()
-                        "WithDraw" -> service.addWithdraw(name, amount).collect()
+                        "Deposit" -> service.addDeposit(name, amount)
+                        "WithDraw" -> service.addWithdraw(name, amount)
                     }
                     dismiss()
                 }

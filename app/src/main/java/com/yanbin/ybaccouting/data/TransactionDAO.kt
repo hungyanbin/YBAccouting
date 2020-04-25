@@ -16,5 +16,5 @@ interface TransactionDAO {
     suspend fun addTransaction(transactionModel: TransactionModel)
 
     @Query("select * from transaction_model where id=(select MAX(id) from transaction_model)")
-    fun getLastTransaction(): Flow<TransactionModel?>
+    suspend fun getLastTransaction(): TransactionModel?
 }

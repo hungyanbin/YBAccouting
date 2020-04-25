@@ -1,8 +1,8 @@
 package com.yanbin.ybaccouting.data
 
 import com.yanbin.ybaccouting.Transaction
-import kotlinx.coroutines.flow.*
-import java.lang.RuntimeException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RoomTransactionRepository(
     accountingDatabase: AccountingDatabase
@@ -29,8 +29,7 @@ class RoomTransactionRepository(
         )
     }
 
-    override fun getCurrentTotal(): Flow<Int> {
-        return dao.getLastTransaction()
-            .map { it?.total ?: 0 }
+    override suspend fun getCurrentTotal(): Int {
+        return dao.getLastTransaction()?.total ?: 0
     }
 }

@@ -16,8 +16,8 @@ class FakeTransactionRepository(
         return flowOf(fakeData)
     }
 
-    override fun getCurrentTotal(): Flow<Int> {
-        return flowOf(currentTotal)
+    override suspend fun getCurrentTotal(): Int {
+        return currentTotal
     }
 
     override suspend fun add(transaction: Transaction) {

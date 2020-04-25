@@ -18,25 +18,21 @@ class AccountingService(
         return transactionRepository.getAll()
     }
 
-    fun addWithdraw(name: String, amount: Int): Flow<Unit> {
-        return transactionRepository.getCurrentTotal()
-            .take(1)
-            .map { it - amount }
-            .map { newTotal ->
-                transactionRepository.add(
-                    Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name)
-                )
-            }
+    suspend fun addWithdraw(name: String, amount: Int) {
+        val currentTotal = transactionRepository.getCurrentTotal()
+        val newTotal = currentTotal - amount
+
+        transactionRepository.add(
+            Transaction(total = newTotal, withDraw = amount, deposit = 0, name = name)
+        )
     }
 
-    suspend fun addDeposit(name: String, amount: Int): Flow<Unit> {
-        return transactionRepository.getCurrentTotal()
-            .take(1)
-            .map { it + amount}
-            .map { newTotal ->
-                transactionRepository.add(
-                    Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name)
-                )
-            }
+    suspend fun addDeposit(name: String, amount: Int) {
+        val currentTotal = transactionRepository.getCurrentTotal()
+        val newTotal = currentTotal + amount
+
+        transactionRepository.add(
+            Transaction(total = newTotal, withDraw = 0, deposit = amount, name = name)
+        )
     }
 }
