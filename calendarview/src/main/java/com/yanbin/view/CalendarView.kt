@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import com.soywiz.klock.*
 
 class CalendarView : View {
     constructor(context: Context) : this(context, null)
@@ -16,7 +17,9 @@ class CalendarView : View {
 
     private var dayCellWidth = 0f
     private var dayCellDrawOffset = 0f
+    private var dayCellHeight = 0f
     private val dayTextPaint = Paint()
+    private var currentDayCell = listOf<DayCell>()
 
     private fun init(context: Context) {
         with(dayTextPaint) {
@@ -27,15 +30,22 @@ class CalendarView : View {
 
         val fontMetrics = dayTextPaint.fontMetrics
         dayCellDrawOffset = -fontMetrics.top
+        dayCellHeight = fontMetrics.bottom - fontMetrics.top + 8.dp()
+
+        currentDayCell = DayTimeUtils.generateDayCellForThisMonth(TimeProvider)
     }
 
     override fun onDraw(canvas: Canvas) {
         if (dayCellWidth == 0f) return
 
-        for (i in 0..6) {
-            val textCenterX = (i + 0.5f)* dayCellWidth
-            val textCenterY = dayCellDrawOffset
-            canvas.drawText(i.toString(), textCenterX, textCenterY, dayTextPaint)
+        var rowNumber = 0
+        currentDayCell.forEach { dayCell ->
+            val textCenterX = (dayCell.weekDay.index0 + 0.5f)* dayCellWidth
+            val textCenterY = dayCellDrawOffset + rowNumber * dayCellHeight
+            canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textCenterY, dayTextPaint)
+            if (dayCell.weekDay == DayOfWeek.Saturday) {
+                rowNumber ++
+            }
         }
     }
 
@@ -43,4 +53,10 @@ class CalendarView : View {
         super.onSizeChanged(w, h, oldw, oldh)
         dayCellWidth = w / 7f
     }
+
+
+
+    //display current month
+    //first column of the day is Sunday
+
 }
