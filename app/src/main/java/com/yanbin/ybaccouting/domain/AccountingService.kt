@@ -3,12 +3,9 @@ package com.yanbin.ybaccouting.domain
 import com.soywiz.klock.TimeProvider
 import com.yanbin.ybaccouting.Transaction
 import com.yanbin.ybaccouting.data.TransactionRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 
-@FlowPreview
-@ExperimentalCoroutinesApi
+
 class AccountingService(
     private val transactionRepository: TransactionRepository,
     private val timeProvider: TimeProvider
