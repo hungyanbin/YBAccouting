@@ -1,8 +1,7 @@
 package com.yanbin.view
 
-import com.soywiz.klock.DateTime
+import com.soywiz.klock.Date
 import com.soywiz.klock.DayOfWeek
-import com.soywiz.klock.TimeProvider
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -10,8 +9,8 @@ class DayTimeUtilsTest {
 
     @Test
     fun `get DayCellForThisMonth`() {
-        val timeProvider = TimeProvider { DateTime(2020, 4, 23, 10, 10, 10) }
-        val dayCells = DayTimeUtils.generateDayCellForThisMonth(timeProvider)
+        val date = Date(2020, 4, 23)
+        val dayCells = DayTimeUtils.generateDayCellForThisMonth(date)
 
         Assertions.assertThat(dayCells)
             .isEqualTo(listOf(

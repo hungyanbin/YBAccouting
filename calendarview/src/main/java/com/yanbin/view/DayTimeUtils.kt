@@ -7,8 +7,7 @@ import com.soywiz.klock.TimeProvider
 class DayTimeUtils {
 
     companion object {
-        fun generateDayCellForThisMonth(timeProvider: TimeProvider): List<DayCell> {
-            val today = timeProvider.now().date
+        fun generateDayCellForThisMonth(today: Date): List<DayCell> {
             //get first day of the month
             val firstDayOfMonth = Date(today.year, today.month, 1)
             val dayNumberOfMonth = today.month.days(today.year)
