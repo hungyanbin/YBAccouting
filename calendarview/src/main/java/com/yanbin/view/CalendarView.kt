@@ -54,9 +54,16 @@ class CalendarView : View {
         dayCellWidth = w / 7f
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val newWidth = resolveSizeAndState(width, widthMeasureSpec, 1)
+        val minHeight = WEEKS_OF_ONE_MONTH * dayCellHeight
+        val newHeight = resolveSizeAndState(minHeight.toInt(), heightMeasureSpec, 1)
+        setMeasuredDimension(newWidth, newHeight)
+    }
 
 
-    //display current month
-    //first column of the day is Sunday
+    companion object {
+        private const val WEEKS_OF_ONE_MONTH = 5
+    }
 
 }
