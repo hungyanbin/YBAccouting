@@ -1,16 +1,19 @@
 package com.yanbin.view
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.ViewCompat
-import com.soywiz.klock.*
+import com.soywiz.klock.DayOfWeek
+import com.soywiz.klock.TimeProvider
 
 class CalendarView : View {
     constructor(context: Context) : this(context, null)
@@ -24,7 +27,7 @@ class CalendarView : View {
     private var dayCellHeight = 0f
     private val dayTextPaint = Paint()
     private val calendarRenderModel = CalendarRenderModel()
-    private var xScrollOffset = 0f
+    private var currentAnimator: Animator? = null
 
     private fun init(context: Context) {
         with(dayTextPaint) {
@@ -49,7 +52,7 @@ class CalendarView : View {
     private fun setupGesture(context: Context) {
         val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                xScrollOffset -= distanceX
+                calendarRenderModel.scrollHorizontally(-distanceX)
                 ViewCompat.postInvalidateOnAnimation(this@CalendarView)
                 return true
             }
@@ -58,13 +61,42 @@ class CalendarView : View {
         setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    xScrollOffset = 0f
-                    ViewCompat.postInvalidateOnAnimation(this@CalendarView)
+                    val startOffset = calendarRenderModel.xOffset
+                    val endOffset = calendarRenderModel.calculateSnapOffset()
+                    if (!endOffset.isNaN()) {
+                        startSnapAnimation(startOffset, endOffset)
+                        ViewCompat.postInvalidateOnAnimation(this@CalendarView)
+                    }
                 }
             }
 
             gestureDetector.onTouchEvent(event)
         }
+    }
+
+    private fun startSnapAnimation(startOffset: Float, endOffset: Float) {
+        val animator = ValueAnimator.ofFloat(startOffset, endOffset)
+        animator.duration = 300
+        animator.interpolator = AccelerateDecelerateInterpolator()
+        animator.addUpdateListener { valueAnimator ->
+            val value = valueAnimator?.animatedValue as Float
+            calendarRenderModel.xOffset = value
+            ViewCompat.postInvalidateOnAnimation(this@CalendarView)
+        }
+        animator.addListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+            override fun onAnimationEnd(animation: Animator?) {
+                calendarRenderModel.onSnapComplete()
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {}
+
+            override fun onAnimationStart(animation: Animator?) {}
+        })
+
+        animator.start()
+        currentAnimator = animator
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -74,6 +106,7 @@ class CalendarView : View {
     }
 
     private fun drawDayCells(canvas: Canvas) {
+        val xScrollOffset = calendarRenderModel.xOffset
         drawDayCells(canvas, calendarRenderModel.thisMonth, xScrollOffset)
         drawDayCells(canvas, calendarRenderModel.nextMonth, xScrollOffset + width)
         drawDayCells(canvas, calendarRenderModel.prevMonth, xScrollOffset - width)
@@ -94,6 +127,7 @@ class CalendarView : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         dayCellWidth = w / 7f
+        calendarRenderModel.viewWidth = w.toFloat()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -101,6 +135,11 @@ class CalendarView : View {
         val minHeight = WEEKS_OF_ONE_MONTH * dayCellHeight
         val newHeight = resolveSizeAndState(minHeight.toInt(), heightMeasureSpec, 1)
         setMeasuredDimension(newWidth, newHeight)
+    }
+
+    override fun onDetachedFromWindow() {
+        currentAnimator?.cancel()
+        super.onDetachedFromWindow()
     }
 
 
