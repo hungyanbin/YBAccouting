@@ -120,8 +120,10 @@ class CalendarRenderModelTest {
     @Test
     fun `2020-02-12 scroll to next month should select 2020-03-01`() {
         val calendarRenderModel = CalendarRenderModel()
+        var selectDate: Date? = null
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
+        calendarRenderModel.daySelected = { selectDate = it}
 
         //act
         scrollAndSnap(calendarRenderModel, -600f)
@@ -132,23 +134,29 @@ class CalendarRenderModelTest {
             .matches { monthCells ->
                 monthCells[0].dayOfMonth == 1 && monthCells[0].selected
             }
+        Assertions.assertThat(selectDate)
+            .isEqualTo(Date(2020, 3, 1))
     }
 
     @Test
     fun `2020-02-12 scroll to prev month should select 2020-01-01`() {
         val calendarRenderModel = CalendarRenderModel()
+        var selectDate: Date? = null
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
+        calendarRenderModel.daySelected = { selectDate = it}
 
         //act
         scrollAndSnap(calendarRenderModel, 600f)
 
         //assert
-        //this month becomes 2020-03
+        //this month becomes 2020-01
         Assertions.assertThat(calendarRenderModel.thisMonthCells)
             .matches { monthCells ->
                 monthCells[0].dayOfMonth == 1 && monthCells[0].selected
             }
+        Assertions.assertThat(selectDate)
+            .isEqualTo(Date(2020, 1, 1))
     }
 
     /*              2020-02

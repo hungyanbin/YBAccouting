@@ -1,7 +1,6 @@
 package com.yanbin.ybaccouting
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -16,6 +15,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setSupportActionBar(toolbar)
 
         val transactionAdapter = TransactionAdapter()
         recyclerTransaction.adapter = transactionAdapter
@@ -38,6 +39,10 @@ class MainActivity : AppCompatActivity() {
 
         homeViewModel.currentDate.observe(this, Observer { date ->
             calendar.toDate(date)
+        })
+
+        homeViewModel.title.observe(this, Observer {
+            toolbar.title = it
         })
 
         calendar.setDaySelectedListener { date ->

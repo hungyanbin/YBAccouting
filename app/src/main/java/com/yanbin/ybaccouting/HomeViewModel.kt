@@ -2,6 +2,7 @@ package com.yanbin.ybaccouting
 
 import androidx.lifecycle.*
 import com.soywiz.klock.Date
+import com.soywiz.klock.DateFormat
 import com.soywiz.klock.TimeProvider
 import com.yanbin.ybaccouting.domain.AccountingService
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -23,6 +24,7 @@ class HomeViewModel(
         }.asLiveData()
     val currentTotal = MutableLiveData<String>()
     val currentDate = MutableLiveData<Date>()
+    val title = MutableLiveData<String>()
 
     init {
         viewModelScope.launch {
@@ -36,12 +38,20 @@ class HomeViewModel(
                 }
         }
 
-        dateChannel.offer(timeProvider.now().date)
-        currentDate.postValue(timeProvider.now().date)
+        val today = timeProvider.now().date
+        dateChannel.offer(today)
+        currentDate.postValue(today)
+        title.postValue(dateToTitle(today))
     }
+
+    private fun dateToTitle(date: Date): String {
+        return date.format(DateFormat.FORMAT_DATE)
+    }
+
 
     fun selectDate(date: Date) {
         dateChannel.offer(date)
+        title.postValue(dateToTitle(date))
     }
 
     private fun mapMoneyFormat(money: Int): String {

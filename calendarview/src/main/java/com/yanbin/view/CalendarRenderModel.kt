@@ -40,8 +40,10 @@ internal class CalendarRenderModel {
         val dateOfPrevMonth = date.plus(MonthSpan(-1))
         prevMonthCells = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
 
-        thisMonthCells[currentDate.day - 1].selected = true
-        lastHighlightDay = thisMonthCells[currentDate.day - 1]
+        val firstDayOfThisMonth = thisMonthCells[currentDate.day - 1]
+        firstDayOfThisMonth.selected = true
+        daySelected.invoke(Date(currentDate.year, currentDate.month, firstDayOfThisMonth.dayOfMonth))
+        lastHighlightDay = firstDayOfThisMonth
     }
 
     fun onCellTouched(row: Int, column: Int) {
