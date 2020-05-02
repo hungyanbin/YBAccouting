@@ -9,12 +9,12 @@ internal class CalendarRenderModel {
     var prevMonthCells: List<DayCell> = listOf()
 
     var xOffset = 0f
-    var state = CalendarViewState.IDLE
     var viewWidth = 0f
     var daySelected: (Date) -> Unit = {}
 
     private var currentDate = TimeProvider.now().date
     private var lastHighlightDay: DayCell? = null
+    private var state = CalendarViewState.IDLE
 
     fun setDate(date: Date) {
         currentDate = date
