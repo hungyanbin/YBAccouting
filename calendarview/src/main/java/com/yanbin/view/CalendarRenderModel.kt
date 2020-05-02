@@ -1,9 +1,6 @@
 package com.yanbin.view
 
-import com.soywiz.klock.Date
-import com.soywiz.klock.MonthSpan
-import com.soywiz.klock.TimeProvider
-import com.soywiz.klock.plus
+import com.soywiz.klock.*
 
 internal class CalendarRenderModel {
 
@@ -58,10 +55,12 @@ internal class CalendarRenderModel {
 
     fun onSnapComplete() {
         if (xOffset == viewWidth) {
-            val dateOfPrevMonth = currentDate.plus(MonthSpan(-1))
+            val dateOfPrevMonth = currentDate
+                .plus(DateTimeSpan(months = -1, days = -(currentDate.day - 1)))
             setDate(dateOfPrevMonth)
         } else if (xOffset == -viewWidth) {
-            val dateOfNextMonth = currentDate.plus(MonthSpan(1))
+            val dateOfNextMonth = currentDate
+                .plus(DateTimeSpan(months = 1, days = -(currentDate.day - 1)))
             setDate(dateOfNextMonth)
         }
 
