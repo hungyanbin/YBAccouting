@@ -7,27 +7,28 @@ import com.soywiz.klock.plus
 
 internal class CalendarRenderModel {
 
-    var thisMonth: List<DayCell> = listOf()
-    var nextMonth: List<DayCell> = listOf()
-    var prevMonth: List<DayCell> = listOf()
+    var thisMonthCells: List<DayCell> = listOf()
+    var nextMonthCells: List<DayCell> = listOf()
+    var prevMonthCells: List<DayCell> = listOf()
 
     var xOffset = 0f
     var state = CalendarViewState.IDLE
     var viewWidth = 0f
+    var daySelected: (Date) -> Unit = {}
 
     private var currentDate = TimeProvider.now().date
     private var lastHighlightDay: DayCell? = null
 
     fun setDate(date: Date) {
         currentDate = date
-        thisMonth = DayTimeUtils.generateDayCellForThisMonth(date)
+        thisMonthCells = DayTimeUtils.generateDayCellForThisMonth(date)
         val dateOfNextMonth = date.plus(MonthSpan(1))
-        nextMonth = DayTimeUtils.generateDayCellForThisMonth(dateOfNextMonth)
+        nextMonthCells = DayTimeUtils.generateDayCellForThisMonth(dateOfNextMonth)
         val dateOfPrevMonth = date.plus(MonthSpan(-1))
-        prevMonth = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
+        prevMonthCells = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
 
-        thisMonth[0].selected = true
-        lastHighlightDay = thisMonth[0]
+        thisMonthCells[currentDate.day - 1].selected = true
+        lastHighlightDay = thisMonthCells[currentDate.day - 1]
     }
 
     fun scrollHorizontally(distance: Float) {
@@ -69,11 +70,12 @@ internal class CalendarRenderModel {
     }
 
     fun onCellTouched(row: Int, column: Int) {
-        val selectedCell = thisMonth.find { it.weekDay.index0 == column && it.weekOfMonth == row }
+        val selectedCell = thisMonthCells.find { it.weekDay.index0 == column && it.weekOfMonth == row }
         selectedCell?.let { dayCell ->
             lastHighlightDay?.selected = false
             dayCell.selected = true
             lastHighlightDay = dayCell
+            daySelected.invoke(Date(currentDate.year, currentDate.month, dayCell.dayOfMonth))
         }
     }
 }

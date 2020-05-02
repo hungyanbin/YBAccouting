@@ -1,6 +1,7 @@
 package com.yanbin.ybaccouting
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         homeViewModel.currentTotal.observe(this, Observer { total ->
             textTotal.text = total
         })
+
+        calendar.setDaySelectedListener { date ->
+            Log.i("testt", "date: $date")
+        }
 
     }
 

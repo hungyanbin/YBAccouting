@@ -13,9 +13,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.ViewCompat
+import com.soywiz.klock.Date
 import com.soywiz.klock.TimeProvider
 
 class CalendarView : View {
+
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
@@ -130,9 +132,9 @@ class CalendarView : View {
 
     private fun drawDayCells(canvas: Canvas) {
         val xScrollOffset = calendarRenderModel.xOffset
-        drawDayCells(canvas, calendarRenderModel.thisMonth, xScrollOffset)
-        drawDayCells(canvas, calendarRenderModel.nextMonth, xScrollOffset + width)
-        drawDayCells(canvas, calendarRenderModel.prevMonth, xScrollOffset - width)
+        drawDayCells(canvas, calendarRenderModel.thisMonthCells, xScrollOffset)
+        drawDayCells(canvas, calendarRenderModel.nextMonthCells, xScrollOffset + width)
+        drawDayCells(canvas, calendarRenderModel.prevMonthCells, xScrollOffset - width)
     }
 
     private fun drawDayCells(canvas: Canvas, dayCells: List<DayCell>, xOffset: Float) {
@@ -167,6 +169,13 @@ class CalendarView : View {
         super.onDetachedFromWindow()
     }
 
+    fun toDate(date: Date) {
+        calendarRenderModel.setDate(date)
+    }
+
+    fun setDaySelectedListener(onDaySelected: (Date) -> Unit) {
+        calendarRenderModel.daySelected = onDaySelected
+    }
 
     companion object {
         private const val WEEKS_OF_ONE_MONTH = 5
