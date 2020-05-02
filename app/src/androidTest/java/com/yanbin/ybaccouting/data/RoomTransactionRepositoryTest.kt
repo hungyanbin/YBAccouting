@@ -3,6 +3,7 @@ package com.yanbin.ybaccouting.data
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.soywiz.klock.Date
 import com.soywiz.klock.DateTime
 import com.yanbin.ybaccouting.Transaction
 import kotlinx.coroutines.flow.take
@@ -51,6 +52,35 @@ class RoomTransactionRepositoryTest {
             Assert.assertEquals(1000, allTransactions[0].total)
             Assert.assertEquals(40, allTransactions[0].withDraw)
             Assert.assertEquals(DateTime(2012, 4, 23, 12, 23, 59), allTransactions[0].recordTime)
+        }
+    }
+
+    @Test
+    fun insertAndGetByDate() {
+        runBlocking {
+            repository.add(
+                Transaction(
+                total = 1000,
+                withDraw = 40,
+                deposit = 0,
+                name = "lunch",
+                recordTime = DateTime(2012, 4, 23, 12, 23, 59)))
+            repository.add(
+                Transaction(
+                    total = 900,
+                    withDraw = 100,
+                    deposit = 0,
+                    name = "coffee",
+                    recordTime = DateTime(2012, 4, 25, 12, 23, 59)))
+
+            val allTransactions = repository.getByDate(Date(2012, 4,25))
+                .take(1)
+                .toList().first()
+            Assert.assertEquals(1, allTransactions.size)
+            Assert.assertEquals("coffee", allTransactions[0].name)
+            Assert.assertEquals(900, allTransactions[0].total)
+            Assert.assertEquals(100, allTransactions[0].withDraw)
+            Assert.assertEquals(DateTime(2012, 4, 25, 12, 23, 59), allTransactions[0].recordTime)
         }
     }
 
