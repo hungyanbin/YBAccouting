@@ -7,16 +7,13 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.ViewCompat
-import com.soywiz.klock.DayOfWeek
 import com.soywiz.klock.TimeProvider
-import android.util.TypedValue
-
-
 
 class CalendarView : View {
     constructor(context: Context) : this(context, null)
@@ -74,6 +71,14 @@ class CalendarView : View {
                 ViewCompat.postInvalidateOnAnimation(this@CalendarView)
                 return true
             }
+
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                val touchedColumn = (e.x / dayCellWidth).toInt()
+                val touchedRow = (e.y / dayCellHeight).toInt()
+                calendarRenderModel.onCellTouched(touchedRow, touchedColumn)
+                postInvalidate()
+                return true
+            }
         }
         val gestureDetector = GestureDetector(context, gestureListener)
         setOnTouchListener { _, event ->
@@ -83,7 +88,7 @@ class CalendarView : View {
                     val endOffset = calendarRenderModel.calculateSnapOffset()
                     if (!endOffset.isNaN()) {
                         startSnapAnimation(startOffset, endOffset)
-                        ViewCompat.postInvalidateOnAnimation(this@CalendarView)
+                        postInvalidate()
                     }
                 }
             }
@@ -131,19 +136,15 @@ class CalendarView : View {
     }
 
     private fun drawDayCells(canvas: Canvas, dayCells: List<DayCell>, xOffset: Float) {
-        var rowNumber = 0
         dayCells.forEach { dayCell ->
             val textCenterX = (dayCell.weekDay.index0 + 0.5f) * dayCellWidth + xOffset
-            val textBaseY = dayCellDrawOffset + rowNumber * dayCellHeight
-            val textCenterY = dayCellHeight/2 + rowNumber * dayCellHeight
+            val textBaseY = dayCellDrawOffset + dayCell.weekOfMonth * dayCellHeight
+            val textCenterY = dayCellHeight/2 + dayCell.weekOfMonth * dayCellHeight
             if (dayCell.selected){
                 canvas.drawCircle(textCenterX, textCenterY, dayCellHeight/2, dayHighlightPaint)
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayHighlightTextPaint)
             } else {
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayTextPaint)
-            }
-            if (dayCell.weekDay == DayOfWeek.Saturday) {
-                rowNumber++
             }
         }
     }

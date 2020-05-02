@@ -65,6 +65,13 @@ internal class CalendarRenderModel {
         xOffset = 0f
         state = CalendarViewState.IDLE
     }
+
+    fun onCellTouched(row: Int, column: Int) {
+        val selectedCell = thisMonth.find { it.weekDay.index0 == column && it.weekOfMonth == row }
+        selectedCell?.let { dayCell ->
+            dayCell.selected = true
+        }
+    }
 }
 
 internal enum class CalendarViewState {
