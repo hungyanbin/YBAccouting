@@ -1,5 +1,6 @@
 package com.yanbin.ybaccouting.domain
 
+import com.soywiz.klock.Date
 import com.soywiz.klock.TimeProvider
 import com.yanbin.ybaccouting.Transaction
 import com.yanbin.ybaccouting.data.TransactionRepository
@@ -13,6 +14,10 @@ class AccountingService(
 
     fun getAllTransactions(): Flow<List<Transaction>> {
         return transactionRepository.getAll()
+    }
+
+    fun getTransactionsByDate(date: Date): Flow<List<Transaction>> {
+        return transactionRepository.getByDate(date)
     }
 
     suspend fun addWithdraw(name: String, amount: Int) {

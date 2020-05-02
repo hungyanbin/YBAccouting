@@ -1,5 +1,6 @@
 package com.yanbin.ybaccouting.domain
 
+import com.soywiz.klock.Date
 import com.yanbin.ybaccouting.Transaction
 import com.yanbin.ybaccouting.data.TransactionRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,10 @@ class FakeTransactionRepository(
     var lastedAddedTransaction: Transaction? = null
 
     override fun getAll(): Flow<List<Transaction>> {
+        return flowOf(fakeData)
+    }
+
+    override fun getByDate(date: Date): Flow<List<Transaction>> {
         return flowOf(fakeData)
     }
 

@@ -57,9 +57,6 @@ class CalendarView : View {
         dayCellDrawOffset = -fontMetrics.top + 4.dp()
         dayCellHeight = fontMetrics.bottom - fontMetrics.top + 8.dp()
 
-        val today = TimeProvider.now().date
-        calendarRenderModel.setDate(today)
-
         setupGesture(context)
 
         isClickable = true

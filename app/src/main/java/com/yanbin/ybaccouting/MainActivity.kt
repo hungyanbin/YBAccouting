@@ -36,8 +36,12 @@ class MainActivity : AppCompatActivity() {
             textTotal.text = total
         })
 
+        homeViewModel.currentDate.observe(this, Observer { date ->
+            calendar.toDate(date)
+        })
+
         calendar.setDaySelectedListener { date ->
-            Log.i("testt", "date: $date")
+            homeViewModel.selectDate(date)
         }
 
     }

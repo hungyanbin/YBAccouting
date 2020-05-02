@@ -14,7 +14,7 @@ val databaseModule = module {
 }
 
 val accountingModule = module {
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), TimeProvider) }
 
     factory<TransactionRepository> {
         RoomTransactionRepository(get())

@@ -12,6 +12,9 @@ interface TransactionDAO {
     @Query("select * from transaction_model")
     fun getAll(): Flow<List<TransactionModel>>
 
+    @Query("select * from transaction_model WHERE dateTime LIKE :dateString")
+    fun getByDate(dateString: String): Flow<List<TransactionModel>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addTransaction(transactionModel: TransactionModel)
 
