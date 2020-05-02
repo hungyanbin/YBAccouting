@@ -2,9 +2,9 @@ package com.yanbin.view
 
 import com.soywiz.klock.*
 
-internal class CalendarRenderModel(
-    val viewPort: CalendarViewPort
-) {
+internal class CalendarRenderModel {
+
+    val viewPort = CalendarViewPort()
 
     var thisMonthCells: List<DayCell> = listOf()
     var nextMonthCells: List<DayCell> = listOf()
@@ -16,7 +16,7 @@ internal class CalendarRenderModel(
     private var lastHighlightDay: DayCell? = null
 
     init {
-        viewPort.onViewPortStateChanged = { state ->
+        viewPort.setViewPortStateListener { state ->
             when(state) {
                 ViewPortState.PREV_VIEW -> {
                     val dateOfPrevMonth = currentDate

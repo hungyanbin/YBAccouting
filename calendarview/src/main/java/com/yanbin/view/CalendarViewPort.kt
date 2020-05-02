@@ -3,33 +3,45 @@ package com.yanbin.view
 internal class CalendarViewPort {
 
     var xOffset = 0f
+        private set
     var viewWidth = 0f
-    var onViewPortStateChanged: (ViewPortState) -> Unit = {}
 
-    var state = ViewPortState.IDLE
+    private var onViewPortStateChanged: (ViewPortState) -> Unit = {}
+    private var state = ViewPortState.IDLE
+
+    fun setViewPortStateListener(listener: (ViewPortState) -> Unit) {
+        onViewPortStateChanged = listener
+    }
 
     fun scrollHorizontally(distance: Float) {
         if (state == ViewPortState.SNAP) {
             return
         }
 
+        if (state != ViewPortState.SCROLLING) {
+            updateViewPortState(ViewPortState.SCROLLING)
+        }
+
         xOffset += distance
-        updateViewPortState(ViewPortState.SCROLLING)
+    }
+
+    fun snapHorizontally(newOffset: Float) {
+        if (state == ViewPortState.SCROLLING) {
+            updateViewPortState(ViewPortState.SNAP)
+        } else if (state != ViewPortState.SNAP) {
+            return
+        }
+
+        xOffset = newOffset
     }
 
     fun calculateSnapOffset(): Float {
-        return if (state == ViewPortState.SCROLLING) {
-            updateViewPortState(ViewPortState.SNAP)
-
-            if (xOffset in 0f..viewWidth / 2 || xOffset in -viewWidth / 2..0f) {
-                0f
-            } else if (xOffset > viewWidth / 2) {
-                viewWidth
-            } else {
-                -viewWidth
-            }
+        return if (xOffset in 0f..viewWidth / 2 || xOffset in -viewWidth / 2..0f) {
+            0f
+        } else if (xOffset > viewWidth / 2) {
+            viewWidth
         } else {
-            Float.NaN
+            -viewWidth
         }
     }
 

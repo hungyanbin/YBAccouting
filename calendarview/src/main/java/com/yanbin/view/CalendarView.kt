@@ -29,7 +29,7 @@ class CalendarView : View {
     private val dayTextPaint = Paint()
     private val dayHighlightTextPaint = Paint()
     private val dayHighlightPaint = Paint()
-    private val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+    private val calendarRenderModel = CalendarRenderModel()
     private var currentAnimator: Animator? = null
 
     private fun init(context: Context) {
@@ -84,10 +84,9 @@ class CalendarView : View {
                 MotionEvent.ACTION_UP -> {
                     val startOffset = calendarRenderModel.viewPort.xOffset
                     val endOffset = calendarRenderModel.viewPort.calculateSnapOffset()
-                    if (!endOffset.isNaN()) {
-                        startSnapAnimation(startOffset, endOffset)
-                        postInvalidate()
-                    }
+
+                    startSnapAnimation(startOffset, endOffset)
+                    postInvalidate()
                 }
             }
 
@@ -101,7 +100,7 @@ class CalendarView : View {
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.addUpdateListener { valueAnimator ->
             val value = valueAnimator?.animatedValue as Float
-            calendarRenderModel.viewPort.xOffset = value
+            calendarRenderModel.viewPort.snapHorizontally(value)
             ViewCompat.postInvalidateOnAnimation(this@CalendarView)
         }
         animator.addListener(object: Animator.AnimatorListener{

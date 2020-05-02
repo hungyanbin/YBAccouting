@@ -33,6 +33,7 @@ dependencies {
     //test
     testImplementation 'junit:junit:4.12'
     testImplementation "org.assertj:assertj-core:3.11.1"
+    testImplementation "io.mockk:mockk:1.10.0"
 
     //Date time
     implementation "com.soywiz.korlibs.klock:klock:1.7.3"

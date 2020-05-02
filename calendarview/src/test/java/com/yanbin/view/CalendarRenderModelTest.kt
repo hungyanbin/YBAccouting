@@ -9,7 +9,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `setDate on 2020-04-03, prev month should have 31 days and next month should have 31 days`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 4, 3))
 
         Assertions.assertThat(calendarRenderModel.prevMonthCells)
@@ -33,7 +33,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `setDate on 2020-02-13, the day should be selected`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
 
         Assertions.assertThat(calendarRenderModel.thisMonthCells)
@@ -51,7 +51,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `Scroll to right with more than half of width should snap to prev month`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -68,7 +68,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `Scroll to right with less than half of width should snap to this month`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -85,7 +85,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `Scroll to left with more than half of width should snap to next month`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -102,7 +102,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `Scroll to left with less than half of width should snap to this month`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -119,7 +119,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `2020-02-12 scroll to next month should select 2020-03-01`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -136,7 +136,7 @@ class CalendarRenderModelTest {
 
     @Test
     fun `2020-02-12 scroll to prev month should select 2020-01-01`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
@@ -160,7 +160,7 @@ class CalendarRenderModelTest {
      */
     @Test
     fun `touch (4, 0) should select 02-23`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         Assertions.assertThat(calendarRenderModel.thisMonthCells)
             .matches { monthCells ->
@@ -179,24 +179,24 @@ class CalendarRenderModelTest {
 
     @Test
     fun `not able to scroll if it is snapping`() {
-        val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
+        val calendarRenderModel = CalendarRenderModel()
         calendarRenderModel.setDate(Date(2020, 2, 12))
         calendarRenderModel.viewPort.viewWidth = 1000f
 
         //act
         calendarRenderModel.viewPort.scrollHorizontally(600f)
-        calendarRenderModel.viewPort.calculateSnapOffset()
-        Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(600f)
-        calendarRenderModel.viewPort.scrollHorizontally(100f)
+        calendarRenderModel.viewPort.snapHorizontally(700f)
+        Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(700f)
+        calendarRenderModel.viewPort.scrollHorizontally(333f)
 
         //assert
-        Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(600f)
+        Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(700f)
     }
 
     private fun scrollAndSnap(calendarRenderModel: CalendarRenderModel, distance: Float) {
         calendarRenderModel.viewPort.scrollHorizontally(distance)
         val snapOffset = calendarRenderModel.viewPort.calculateSnapOffset()
-        calendarRenderModel.viewPort.xOffset = snapOffset
+        calendarRenderModel.viewPort.snapHorizontally(snapOffset)
         calendarRenderModel.viewPort.onSnapComplete()
     }
 }
