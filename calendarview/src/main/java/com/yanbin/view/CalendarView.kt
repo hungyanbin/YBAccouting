@@ -108,7 +108,7 @@ class CalendarView : View {
             override fun onAnimationRepeat(animation: Animator?) {}
 
             override fun onAnimationEnd(animation: Animator?) {
-                calendarRenderModel.onSnapComplete()
+                calendarRenderModel.viewPort.onSnapComplete()
             }
 
             override fun onAnimationCancel(animation: Animator?) {}

@@ -4,6 +4,7 @@ internal class CalendarViewPort {
 
     var xOffset = 0f
     var viewWidth = 0f
+    var onViewPortStateChanged: (ViewPortState) -> Unit = {}
 
     var state = ViewPortState.IDLE
 
@@ -13,12 +14,12 @@ internal class CalendarViewPort {
         }
 
         xOffset += distance
-        state = ViewPortState.SCROLLING
+        updateViewPortState(ViewPortState.SCROLLING)
     }
 
     fun calculateSnapOffset(): Float {
         return if (state == ViewPortState.SCROLLING) {
-            state = ViewPortState.SNAP
+            updateViewPortState(ViewPortState.SNAP)
 
             if (xOffset in 0f..viewWidth / 2 || xOffset in -viewWidth / 2..0f) {
                 0f
@@ -31,8 +32,24 @@ internal class CalendarViewPort {
             Float.NaN
         }
     }
+
+    fun onSnapComplete() {
+        if (xOffset == viewWidth) {
+            onViewPortStateChanged.invoke(ViewPortState.PREV_VIEW)
+        } else if (xOffset == -viewWidth) {
+            onViewPortStateChanged.invoke(ViewPortState.NEXT_VIEW)
+        }
+
+        xOffset = 0f
+        updateViewPortState(ViewPortState.IDLE)
+    }
+
+    private fun updateViewPortState(state: ViewPortState) {
+        this.state = state
+        onViewPortStateChanged.invoke(state)
+    }
 }
 
 internal enum class ViewPortState {
-    IDLE, SCROLLING, SNAP
+    IDLE, SCROLLING, SNAP, NEXT_VIEW, PREV_VIEW
 }

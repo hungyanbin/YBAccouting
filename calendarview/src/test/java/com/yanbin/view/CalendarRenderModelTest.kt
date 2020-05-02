@@ -197,6 +197,6 @@ class CalendarRenderModelTest {
         calendarRenderModel.viewPort.scrollHorizontally(distance)
         val snapOffset = calendarRenderModel.viewPort.calculateSnapOffset()
         calendarRenderModel.viewPort.xOffset = snapOffset
-        calendarRenderModel.onSnapComplete()
+        calendarRenderModel.viewPort.onSnapComplete()
     }
 }

@@ -15,6 +15,23 @@ internal class CalendarRenderModel(
     private var currentDate = TimeProvider.now().date
     private var lastHighlightDay: DayCell? = null
 
+    init {
+        viewPort.onViewPortStateChanged = { state ->
+            when(state) {
+                ViewPortState.PREV_VIEW -> {
+                    val dateOfPrevMonth = currentDate
+                        .plus(DateTimeSpan(months = -1, days = -(currentDate.day - 1)))
+                    setDate(dateOfPrevMonth)
+                }
+                ViewPortState.NEXT_VIEW -> {
+                    val dateOfNextMonth = currentDate
+                        .plus(DateTimeSpan(months = 1, days = -(currentDate.day - 1)))
+                    setDate(dateOfNextMonth)
+                }
+            }
+        }
+    }
+
     fun setDate(date: Date) {
         currentDate = date
         thisMonthCells = DayTimeUtils.generateDayCellForThisMonth(date)
@@ -25,21 +42,6 @@ internal class CalendarRenderModel(
 
         thisMonthCells[currentDate.day - 1].selected = true
         lastHighlightDay = thisMonthCells[currentDate.day - 1]
-    }
-
-    fun onSnapComplete() {
-        if (viewPort.xOffset == viewPort.viewWidth) {
-            val dateOfPrevMonth = currentDate
-                .plus(DateTimeSpan(months = -1, days = -(currentDate.day - 1)))
-            setDate(dateOfPrevMonth)
-        } else if (viewPort.xOffset == -viewPort.viewWidth) {
-            val dateOfNextMonth = currentDate
-                .plus(DateTimeSpan(months = 1, days = -(currentDate.day - 1)))
-            setDate(dateOfNextMonth)
-        }
-
-        viewPort.xOffset = 0f
-        viewPort.state = ViewPortState.IDLE
     }
 
     fun onCellTouched(row: Int, column: Int) {
