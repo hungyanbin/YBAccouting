@@ -17,7 +17,7 @@ class DayTimeUtils {
             for (i in 0 until dayNumberOfMonth) {
                 val dayOfWeekInt = firstDayOfWeek + i
                 val dayNumber = firstDayOfMonth.day + i
-                dayCells.add(DayCell(DayOfWeek[dayOfWeekInt], dayNumber))
+                dayCells.add(DayCell(DayOfWeek[dayOfWeekInt], dayNumber, false))
             }
 
             return dayCells

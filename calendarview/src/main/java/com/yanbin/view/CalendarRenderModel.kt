@@ -24,6 +24,8 @@ internal class CalendarRenderModel {
         nextMonth = DayTimeUtils.generateDayCellForThisMonth(dateOfNextMonth)
         val dateOfPrevMonth = date.plus(MonthSpan(-1))
         prevMonth = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
+
+        thisMonth[0].selected = true
     }
 
     fun scrollHorizontally(distance: Float) {
