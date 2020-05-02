@@ -16,6 +16,7 @@ internal class CalendarRenderModel {
     var viewWidth = 0f
 
     private var currentDate = TimeProvider.now().date
+    private var lastHighlightDay: DayCell? = null
 
     fun setDate(date: Date) {
         currentDate = date
@@ -26,6 +27,7 @@ internal class CalendarRenderModel {
         prevMonth = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
 
         thisMonth[0].selected = true
+        lastHighlightDay = thisMonth[0]
     }
 
     fun scrollHorizontally(distance: Float) {
@@ -69,7 +71,9 @@ internal class CalendarRenderModel {
     fun onCellTouched(row: Int, column: Int) {
         val selectedCell = thisMonth.find { it.weekDay.index0 == column && it.weekOfMonth == row }
         selectedCell?.let { dayCell ->
+            lastHighlightDay?.selected = false
             dayCell.selected = true
+            lastHighlightDay = dayCell
         }
     }
 }
