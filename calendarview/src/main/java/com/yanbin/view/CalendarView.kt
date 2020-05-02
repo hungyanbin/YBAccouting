@@ -14,7 +14,6 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.view.ViewCompat
 import com.soywiz.klock.Date
-import com.soywiz.klock.TimeProvider
 
 class CalendarView : View {
 
@@ -30,7 +29,7 @@ class CalendarView : View {
     private val dayTextPaint = Paint()
     private val dayHighlightTextPaint = Paint()
     private val dayHighlightPaint = Paint()
-    private val calendarRenderModel = CalendarRenderModel()
+    private val calendarRenderModel = CalendarRenderModel(CalendarViewPort())
     private var currentAnimator: Animator? = null
 
     private fun init(context: Context) {
@@ -66,7 +65,7 @@ class CalendarView : View {
     private fun setupGesture(context: Context) {
         val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                calendarRenderModel.scrollHorizontally(-distanceX)
+                calendarRenderModel.viewPort.scrollHorizontally(-distanceX)
                 ViewCompat.postInvalidateOnAnimation(this@CalendarView)
                 return true
             }
@@ -83,8 +82,8 @@ class CalendarView : View {
         setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    val startOffset = calendarRenderModel.xOffset
-                    val endOffset = calendarRenderModel.calculateSnapOffset()
+                    val startOffset = calendarRenderModel.viewPort.xOffset
+                    val endOffset = calendarRenderModel.viewPort.calculateSnapOffset()
                     if (!endOffset.isNaN()) {
                         startSnapAnimation(startOffset, endOffset)
                         postInvalidate()
@@ -102,7 +101,7 @@ class CalendarView : View {
         animator.interpolator = AccelerateDecelerateInterpolator()
         animator.addUpdateListener { valueAnimator ->
             val value = valueAnimator?.animatedValue as Float
-            calendarRenderModel.xOffset = value
+            calendarRenderModel.viewPort.xOffset = value
             ViewCompat.postInvalidateOnAnimation(this@CalendarView)
         }
         animator.addListener(object: Animator.AnimatorListener{
@@ -128,7 +127,7 @@ class CalendarView : View {
     }
 
     private fun drawDayCells(canvas: Canvas) {
-        val xScrollOffset = calendarRenderModel.xOffset
+        val xScrollOffset = calendarRenderModel.viewPort.xOffset
         drawDayCells(canvas, calendarRenderModel.thisMonthCells, xScrollOffset)
         drawDayCells(canvas, calendarRenderModel.nextMonthCells, xScrollOffset + width)
         drawDayCells(canvas, calendarRenderModel.prevMonthCells, xScrollOffset - width)
@@ -151,7 +150,7 @@ class CalendarView : View {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         dayCellWidth = w / 7f
-        calendarRenderModel.viewWidth = w.toFloat()
+        calendarRenderModel.viewPort.viewWidth = w.toFloat()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
