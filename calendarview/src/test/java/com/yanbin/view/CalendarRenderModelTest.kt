@@ -201,8 +201,65 @@ class CalendarRenderModelTest {
         Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(700f)
     }
 
-    //TODO add test for badge
-    //TODO add test for scroll and restore badge
+    @Test
+    fun `update badge on 2020-04-23, 2020-05-01 should be able see badge on these days`() {
+        val calendarRenderModel = CalendarRenderModel()
+        calendarRenderModel.setDate(Date(2020, 4, 12))
+
+        //act
+        calendarRenderModel.updateBadges(listOf(
+            Date(2020, 4, 23),
+            Date(2020, 5, 1)
+        ))
+
+        //assert
+        Assertions.assertThat(calendarRenderModel.thisMonthCells)
+            .matches { cells ->
+                cells[23 - 1].hasBadge
+            }
+        Assertions.assertThat(calendarRenderModel.nextMonthCells)
+            .matches { cells ->
+                cells[1 - 1].hasBadge
+            }
+    }
+
+    @Test
+    fun `update badge on 2020-05-01 and scroll to next month should be able to see badge`() {
+        val calendarRenderModel = CalendarRenderModel()
+        calendarRenderModel.setDate(Date(2020, 4, 12))
+        calendarRenderModel.viewPort.viewWidth = 1000f
+
+        //act
+        calendarRenderModel.updateBadges(listOf(
+            Date(2020, 5, 1)
+        ))
+        scrollAndSnap(calendarRenderModel, -600f)
+
+        //assert
+        Assertions.assertThat(calendarRenderModel.thisMonthCells)
+            .matches { cells ->
+                cells[1 - 1].hasBadge
+            }
+    }
+
+    @Test
+    fun `update badge on 2020-03-12 and scroll to prev month should be able to see badge`() {
+        val calendarRenderModel = CalendarRenderModel()
+        calendarRenderModel.setDate(Date(2020, 4, 12))
+        calendarRenderModel.viewPort.viewWidth = 1000f
+
+        //act
+        calendarRenderModel.updateBadges(listOf(
+            Date(2020, 3, 12)
+        ))
+        scrollAndSnap(calendarRenderModel, 600f)
+
+        //assert
+        Assertions.assertThat(calendarRenderModel.thisMonthCells)
+            .matches { cells ->
+                cells[12 - 1].hasBadge
+            }
+    }
 
     private fun scrollAndSnap(calendarRenderModel: CalendarRenderModel, distance: Float) {
         calendarRenderModel.viewPort.scrollHorizontally(distance)
