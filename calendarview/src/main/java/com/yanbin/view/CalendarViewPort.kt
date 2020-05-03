@@ -4,10 +4,23 @@ internal class CalendarViewPort {
 
     var xOffset = 0f
         private set
+
     var viewWidth = 0f
+    var viewHeight = 0f
+
+    private var maxViewHeight = 0f
+    private var minViewHeight = 0f
 
     private var onViewPortStateChanged: (ViewPortState) -> Unit = {}
     private var state = ViewPortState.IDLE
+
+    fun setDayCellHeight(cellHeight: Float) {
+        minViewHeight = cellHeight
+        maxViewHeight = cellHeight * WEEKS_OF_ONE_MONTH
+        if (viewHeight == 0f) {
+            viewHeight = maxViewHeight
+        }
+    }
 
     fun setViewPortStateListener(listener: (ViewPortState) -> Unit) {
         onViewPortStateChanged = listener
@@ -23,6 +36,18 @@ internal class CalendarViewPort {
         }
 
         xOffset += distance
+    }
+
+    fun resizeVertically(distance: Float) {
+        if (state != ViewPortState.SCROLLING) {
+            updateViewPortState(ViewPortState.SCROLLING)
+        }
+
+        if (distance > 0 && viewHeight + distance <= maxViewHeight) {
+            viewHeight += distance
+        } else if (distance < 0 && viewHeight + distance >= minViewHeight) {
+            viewHeight += distance
+        }
     }
 
     fun snapHorizontally(newOffset: Float) {
@@ -59,6 +84,10 @@ internal class CalendarViewPort {
     private fun updateViewPortState(state: ViewPortState) {
         this.state = state
         onViewPortStateChanged.invoke(state)
+    }
+
+    companion object {
+        const val WEEKS_OF_ONE_MONTH = 5
     }
 }
 
