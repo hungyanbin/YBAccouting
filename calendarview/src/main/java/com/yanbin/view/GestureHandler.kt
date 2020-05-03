@@ -49,12 +49,12 @@ internal class GestureHandler(
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    val startOffset = viewPort.xOffset
-                    val endOffset = viewPort.calculateSnapOffset()
-                    scrollMode = ScrollMode.IDLE
-
-                    view.startSnapAnimation(startOffset, endOffset)
-                    view.postInvalidate()
+                    if (viewPort.state == ViewPortState.SCROLL_HORIZONTAL ||
+                        viewPort.state == ViewPortState.SCROLL_VERTICAL) {
+                        val animation = viewPort.generateSnapAnimation()
+                        view.startSnapAnimation(animation)
+                        scrollMode = ScrollMode.IDLE
+                    }
                 }
             }
 

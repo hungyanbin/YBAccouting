@@ -1,5 +1,7 @@
 package com.yanbin.view
 
+import java.lang.IllegalStateException
+
 internal class CalendarViewPort {
 
     var xOffset = 0f
@@ -14,7 +16,8 @@ internal class CalendarViewPort {
     private var minViewHeight = 0f
 
     private var onViewPortStateChanged: (ViewPortState) -> Unit = {}
-    private var state = ViewPortState.IDLE
+    //TODO need to revisit and refactor it (HORIZONTAL and VERTICAL)
+    var state = ViewPortState.IDLE
 
     fun setDayCellHeight(cellHeight: Float) {
         minViewHeight = cellHeight
@@ -29,12 +32,12 @@ internal class CalendarViewPort {
     }
 
     fun scrollHorizontally(distance: Float) {
-        if (state == ViewPortState.SNAP) {
+        if (state == ViewPortState.SNAP_HORIZONTAL) {
             return
         }
 
-        if (state != ViewPortState.SCROLLING) {
-            updateViewPortState(ViewPortState.SCROLLING)
+        if (state != ViewPortState.SCROLL_HORIZONTAL) {
+            updateViewPortState(ViewPortState.SCROLL_HORIZONTAL)
         }
 
         xOffset += distance
@@ -42,8 +45,8 @@ internal class CalendarViewPort {
 
 
     fun resizeVertically(distance: Float) {
-        if (state != ViewPortState.SCROLLING) {
-            updateViewPortState(ViewPortState.SCROLLING)
+        if (state != ViewPortState.SCROLL_VERTICAL) {
+            updateViewPortState(ViewPortState.SCROLL_VERTICAL)
         }
 
         if (ableToExpand(distance) || ableToShrink(distance)) {
@@ -62,16 +65,73 @@ internal class CalendarViewPort {
         distance > 0 && viewHeight + distance <= maxViewHeight
 
     fun snapHorizontally(newOffset: Float) {
-        if (state == ViewPortState.SCROLLING) {
-            updateViewPortState(ViewPortState.SNAP)
-        } else if (state != ViewPortState.SNAP) {
-            return
+        if (state == ViewPortState.SCROLL_HORIZONTAL) {
+            updateViewPortState(ViewPortState.SNAP_HORIZONTAL)
         }
 
         xOffset = newOffset
     }
 
+    fun snapVertically(offset: Float, height: Float) {
+        if (state == ViewPortState.SCROLL_VERTICAL) {
+            updateViewPortState(ViewPortState.SNAP_VERTICAL)
+        }
+
+        yOffset = offset
+        viewHeight = height
+    }
+
+    fun generateSnapAnimation(): SnapAnimation {
+        return when(state) {
+            ViewPortState.SCROLL_HORIZONTAL -> {
+                val startOffset = xOffset
+                val endOffset = calculateSnapOffset()
+                HorizontalSnapAnimation(startOffset, endOffset)
+            }
+            ViewPortState.SCROLL_VERTICAL -> {
+                val startOffset = yOffset
+                val endOffset = calculateSnapOffset()
+                val startHeight = viewHeight
+                val endHeight = calculateVerticalSnapHeight()
+                VerticalSnapAnimation(startOffset, endOffset, startHeight, endHeight)
+            }
+            else -> throw IllegalStateException("Impossible!!")
+        }
+
+    }
+
     fun calculateSnapOffset(): Float {
+        return when(state) {
+            ViewPortState.SCROLL_HORIZONTAL -> calculateHorizontalSnapOffset()
+            ViewPortState.SCROLL_VERTICAL -> calculateVerticalSnapOffset()
+            else -> Float.NaN
+        }
+    }
+
+    //TODO need implement
+    private fun calculateVerticalSnapOffset(): Float {
+        return if (needShrinkVertically()) {
+            - anchorRow * minViewHeight
+        } else {
+            0f
+        }
+    }
+
+    //TODO need implement
+    private fun calculateVerticalSnapHeight(): Float {
+        return if (needShrinkVertically()) {
+            minViewHeight
+        } else {
+            maxViewHeight
+        }
+    }
+
+    private fun needShrinkVertically(): Boolean {
+        val totalDistance = maxViewHeight - viewHeight
+        return totalDistance > (maxViewHeight - minViewHeight) / 2
+    }
+
+    private fun calculateHorizontalSnapOffset(): Float {
         return if (xOffset in 0f..viewWidth / 2 || xOffset in -viewWidth / 2..0f) {
             0f
         } else if (xOffset > viewWidth / 2) {
@@ -103,5 +163,5 @@ internal class CalendarViewPort {
 }
 
 internal enum class ViewPortState {
-    IDLE, SCROLLING, SNAP, NEXT_VIEW, PREV_VIEW
+    IDLE, SCROLL_HORIZONTAL, SCROLL_VERTICAL, SNAP_HORIZONTAL, SNAP_VERTICAL, NEXT_VIEW, PREV_VIEW
 }

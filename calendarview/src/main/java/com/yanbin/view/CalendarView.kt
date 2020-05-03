@@ -83,29 +83,8 @@ class CalendarView : View {
         isFocusable = true
     }
 
-    internal fun startSnapAnimation(startOffset: Float, endOffset: Float) {
-        val animator = ValueAnimator.ofFloat(startOffset, endOffset)
-        animator.duration = 300
-        animator.interpolator = AccelerateDecelerateInterpolator()
-        animator.addUpdateListener { valueAnimator ->
-            val value = valueAnimator?.animatedValue as Float
-            viewPort.snapHorizontally(value)
-            ViewCompat.postInvalidateOnAnimation(this@CalendarView)
-        }
-        animator.addListener(object: Animator.AnimatorListener{
-            override fun onAnimationRepeat(animation: Animator?) {}
-
-            override fun onAnimationEnd(animation: Animator?) {
-                viewPort.onSnapComplete()
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {}
-
-            override fun onAnimationStart(animation: Animator?) {}
-        })
-
-        animator.start()
-        currentAnimator = animator
+    internal fun startSnapAnimation(snapAnimation: SnapAnimation) {
+        currentAnimator = snapAnimation.start(viewPort, this)
     }
 
     override fun onDraw(canvas: Canvas) {
