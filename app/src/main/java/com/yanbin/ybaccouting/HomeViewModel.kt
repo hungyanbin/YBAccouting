@@ -24,6 +24,7 @@ class HomeViewModel(
         }.asLiveData()
     val currentTotal = MutableLiveData<String>()
     val currentDate = MutableLiveData<Date>()
+    val transactionDates = MutableLiveData<List<Date>>()
     val title = MutableLiveData<String>()
 
     init {
@@ -35,6 +36,10 @@ class HomeViewModel(
                     }
                     val lastTransaction = transactions.last()
                     currentTotal.postValue(mapMoneyFormat(lastTransaction.total))
+                    //dates
+                    val allTransactionDates = transactions.distinctBy { it.recordTime }
+                        .map { it.recordTime.date }
+                    transactionDates.postValue(allTransactionDates)
                 }
         }
 

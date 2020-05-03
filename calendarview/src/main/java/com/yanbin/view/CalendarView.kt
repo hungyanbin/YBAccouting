@@ -26,9 +26,15 @@ class CalendarView : View {
     private var dayCellWidth = 0f
     private var dayCellDrawOffset = 0f
     private var dayCellHeight = 0f
+    private var badgeYOffset = 0f
+    private var dayTextCenterOffset = 0f
+    private var selectedDayCellRadius = 0f
     private val dayTextPaint = Paint()
     private val dayHighlightTextPaint = Paint()
     private val dayHighlightPaint = Paint()
+    private val badgePaint = Paint()
+    private val dayCellPaddingTop = 6.dp()
+    private val dayCellPaddingBottom = 12.dp()
     private val calendarRenderModel = CalendarRenderModel()
     private var currentAnimator: Animator? = null
 
@@ -52,9 +58,20 @@ class CalendarView : View {
             color = outValue.data
         }
 
+        with(badgePaint) {
+            val outValue = TypedValue()
+            val colorAttr = android.R.attr.colorPrimary
+            context.theme.resolveAttribute(colorAttr, outValue, true)
+            color = outValue.data
+        }
+
         val fontMetrics = dayTextPaint.fontMetrics
-        dayCellDrawOffset = -fontMetrics.top + 4.dp()
-        dayCellHeight = fontMetrics.bottom - fontMetrics.top + 8.dp()
+        dayCellDrawOffset = -fontMetrics.top + dayCellPaddingTop
+        val textHeight = fontMetrics.bottom - fontMetrics.top
+        dayCellHeight = textHeight + dayCellPaddingTop + dayCellPaddingBottom
+        badgeYOffset = textHeight + dayCellPaddingTop + dayCellPaddingBottom/2
+        dayTextCenterOffset = textHeight/2 + dayCellPaddingTop
+        selectedDayCellRadius = textHeight/2 + 5.dp()
 
         setupGesture(context)
 
@@ -136,11 +153,15 @@ class CalendarView : View {
         dayCells.forEach { dayCell ->
             val textCenterX = (dayCell.weekDay.index0 + 0.5f) * dayCellWidth + xOffset
             val textBaseY = dayCellDrawOffset + dayCell.weekOfMonth * dayCellHeight
-            val textCenterY = dayCellHeight/2 + dayCell.weekOfMonth * dayCellHeight
-            if (dayCell.selected){
-                canvas.drawCircle(textCenterX, textCenterY, dayCellHeight/2, dayHighlightPaint)
+            val textCenterY = dayTextCenterOffset + dayCell.weekOfMonth * dayCellHeight
+            if (dayCell.selected) {
+                canvas.drawCircle(textCenterX, textCenterY, selectedDayCellRadius, dayHighlightPaint)
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayHighlightTextPaint)
             } else {
+                if (dayCell.hasBadge) {
+                    val badgeCenterY = dayCell.weekOfMonth * dayCellHeight + badgeYOffset
+                    canvas.drawCircle(textCenterX, badgeCenterY, 2.dp().toFloat(), badgePaint)
+                }
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayTextPaint)
             }
         }
@@ -170,6 +191,10 @@ class CalendarView : View {
 
     fun setDaySelectedListener(onDaySelected: (Date) -> Unit) {
         calendarRenderModel.daySelected = onDaySelected
+    }
+
+    fun updateBadges(badgeDates: List<Date>) {
+        calendarRenderModel.updateBadges(badgeDates)
     }
 
     companion object {

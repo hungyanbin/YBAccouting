@@ -45,6 +45,10 @@ class MainActivity : AppCompatActivity() {
             toolbar.title = it
         })
 
+        homeViewModel.transactionDates.observe(this, Observer {
+            calendar.updateBadges(it)
+        })
+
         calendar.setDaySelectedListener { date ->
             homeViewModel.selectDate(date)
         }

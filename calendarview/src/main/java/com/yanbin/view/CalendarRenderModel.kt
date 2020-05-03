@@ -14,6 +14,7 @@ internal class CalendarRenderModel {
 
     private var currentDate = TimeProvider.now().date
     private var lastHighlightDay: DayCell? = null
+    private var currentBadgeDates = listOf<Date>()
 
     init {
         viewPort.setViewPortStateListener { state ->
@@ -42,6 +43,7 @@ internal class CalendarRenderModel {
 
         val firstDayOfThisMonth = thisMonthCells[currentDate.day - 1]
         firstDayOfThisMonth.selected = true
+        updateBadgeInternal()
         daySelected.invoke(Date(currentDate.year, currentDate.month, firstDayOfThisMonth.dayOfMonth))
         lastHighlightDay = firstDayOfThisMonth
     }
@@ -53,6 +55,38 @@ internal class CalendarRenderModel {
             dayCell.selected = true
             lastHighlightDay = dayCell
             daySelected.invoke(Date(currentDate.year, currentDate.month, dayCell.dayOfMonth))
+        }
+    }
+
+    fun updateBadges(badgeDates: List<Date>) {
+        this.currentBadgeDates = badgeDates
+        updateBadgeInternal()
+    }
+
+    private fun updateBadgeInternal() {
+        val badgesThisMonth = currentBadgeDates.filter {
+            it.year == currentDate.year && it.month == currentDate.month
+        }
+        val badgesPrevMonth = currentBadgeDates.filter {
+            it.year == currentDate.year && it.month == currentDate.month.previous
+        }
+        val badgesNextMonth = currentBadgeDates.filter {
+            it.year == currentDate.year && it.month == currentDate.month.next
+        }
+
+        thisMonthCells.forEachIndexed { index, dayCell ->
+            dayCell.hasBadge = badgesThisMonth
+                .contains(Date(currentDate.year, currentDate.month, index + 1))
+        }
+
+        nextMonthCells.forEachIndexed { index, dayCell ->
+            dayCell.hasBadge = badgesNextMonth
+                .contains(Date(currentDate.year, currentDate.month.next, index + 1))
+        }
+
+        prevMonthCells.forEachIndexed { index, dayCell ->
+            dayCell.hasBadge = badgesPrevMonth
+                .contains(Date(currentDate.year, currentDate.month.previous, index + 1))
         }
     }
 }

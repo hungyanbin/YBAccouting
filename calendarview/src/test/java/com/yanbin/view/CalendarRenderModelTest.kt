@@ -201,6 +201,9 @@ class CalendarRenderModelTest {
         Assertions.assertThat(calendarRenderModel.viewPort.xOffset).isEqualTo(700f)
     }
 
+    //TODO add test for badge
+    //TODO add test for scroll and restore badge
+
     private fun scrollAndSnap(calendarRenderModel: CalendarRenderModel, distance: Float) {
         calendarRenderModel.viewPort.scrollHorizontally(distance)
         val snapOffset = calendarRenderModel.viewPort.calculateSnapOffset()
