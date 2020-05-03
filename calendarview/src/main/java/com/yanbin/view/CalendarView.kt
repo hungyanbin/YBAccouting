@@ -124,14 +124,15 @@ class CalendarView : View {
     private fun drawDayCells(canvas: Canvas, dayCells: List<DayCell>, xOffset: Float) {
         dayCells.forEach { dayCell ->
             val textCenterX = (dayCell.weekDay.index0 + 0.5f) * dayCellWidth + xOffset
-            val textBaseY = dayCellDrawOffset + dayCell.weekOfMonth * dayCellHeight
-            val textCenterY = dayTextCenterOffset + dayCell.weekOfMonth * dayCellHeight
+            val dayCellDrawTop = dayCell.weekOfMonth * dayCellHeight + viewPort.yOffset
+            val textBaseY = dayCellDrawOffset + dayCellDrawTop
+            val textCenterY = dayTextCenterOffset + dayCellDrawTop
             if (dayCell.selected) {
                 canvas.drawCircle(textCenterX, textCenterY, selectedDayCellRadius, dayHighlightPaint)
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayHighlightTextPaint)
             } else {
                 if (dayCell.hasBadge) {
-                    val badgeCenterY = dayCell.weekOfMonth * dayCellHeight + badgeYOffset
+                    val badgeCenterY = badgeYOffset + dayCellDrawTop
                     canvas.drawCircle(textCenterX, badgeCenterY, 2.dp().toFloat(), badgePaint)
                 }
                 canvas.drawText(dayCell.dayOfMonth.toString(), textCenterX, textBaseY, dayTextPaint)

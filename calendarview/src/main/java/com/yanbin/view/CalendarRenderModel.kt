@@ -11,9 +11,9 @@ internal class CalendarRenderModel {
     var prevMonthCells: List<DayCell> = listOf()
 
     var daySelected: (Date) -> Unit = {}
+    var currentHighlightDay: DayCell? = null
 
     private var currentDate = TimeProvider.now().date
-    private var lastHighlightDay: DayCell? = null
     private var currentBadgeDates = listOf<Date>()
 
     init {
@@ -41,26 +41,30 @@ internal class CalendarRenderModel {
         val dateOfPrevMonth = date.plus(MonthSpan(-1))
         prevMonthCells = DayTimeUtils.generateDayCellForThisMonth(dateOfPrevMonth)
 
-        val firstDayOfThisMonth = thisMonthCells[currentDate.day - 1]
-        firstDayOfThisMonth.selected = true
         updateBadgeInternal()
-        daySelected.invoke(Date(currentDate.year, currentDate.month, firstDayOfThisMonth.dayOfMonth))
-        lastHighlightDay = firstDayOfThisMonth
+        val firstDayOfThisMonth = thisMonthCells[currentDate.day - 1]
+        selectDay(firstDayOfThisMonth)
     }
 
     fun onCellTouched(row: Int, column: Int) {
         val selectedCell = thisMonthCells.find { it.weekDay.index0 == column && it.weekOfMonth == row }
         selectedCell?.let { dayCell ->
-            lastHighlightDay?.selected = false
-            dayCell.selected = true
-            lastHighlightDay = dayCell
-            daySelected.invoke(Date(currentDate.year, currentDate.month, dayCell.dayOfMonth))
+            currentHighlightDay?.selected = false
+
+            selectDay(dayCell)
         }
     }
 
     fun updateBadges(badgeDates: List<Date>) {
         this.currentBadgeDates = badgeDates
         updateBadgeInternal()
+    }
+
+    private fun selectDay(dayCell: DayCell) {
+        dayCell.selected = true
+        daySelected.invoke(Date(currentDate.year, currentDate.month, dayCell.dayOfMonth))
+        currentHighlightDay = dayCell
+        viewPort.anchorRow = dayCell.weekOfMonth
     }
 
     private fun updateBadgeInternal() {

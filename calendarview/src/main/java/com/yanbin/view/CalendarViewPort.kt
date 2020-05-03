@@ -4,6 +4,8 @@ internal class CalendarViewPort {
 
     var xOffset = 0f
         private set
+    var yOffset = 0f
+    var anchorRow = 0
 
     var viewWidth = 0f
     var viewHeight = 0f
@@ -38,17 +40,26 @@ internal class CalendarViewPort {
         xOffset += distance
     }
 
+
     fun resizeVertically(distance: Float) {
         if (state != ViewPortState.SCROLLING) {
             updateViewPortState(ViewPortState.SCROLLING)
         }
 
-        if (distance > 0 && viewHeight + distance <= maxViewHeight) {
+        if (ableToExpand(distance) || ableToShrink(distance)) {
             viewHeight += distance
-        } else if (distance < 0 && viewHeight + distance >= minViewHeight) {
-            viewHeight += distance
+            val anchorHeight = anchorRow * minViewHeight
+            val totalDistance = maxViewHeight - viewHeight
+            val maxDistance = maxViewHeight - minViewHeight
+            yOffset = -anchorHeight * totalDistance / maxDistance
         }
     }
+
+    private fun ableToShrink(distance: Float) =
+        distance < 0 && viewHeight + distance >= minViewHeight
+
+    private fun ableToExpand(distance: Float) =
+        distance > 0 && viewHeight + distance <= maxViewHeight
 
     fun snapHorizontally(newOffset: Float) {
         if (state == ViewPortState.SCROLLING) {
