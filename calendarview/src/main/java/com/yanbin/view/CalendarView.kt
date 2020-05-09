@@ -1,6 +1,5 @@
 package com.yanbin.view
 
-import android.animation.Animator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -35,7 +34,7 @@ class CalendarView : View {
     private val calendarRenderModel = CalendarRenderModel()
     private val viewPort = calendarRenderModel.viewPort
     private lateinit var gestureHandler: GestureHandler
-    private var currentAnimator: Animator? = null
+    private var currentAnimator: AnimationPlayer? = null
 
     private fun init(context: Context) {
         with(dayTextPaint) {

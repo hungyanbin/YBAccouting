@@ -6,19 +6,19 @@ import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
 
 internal interface SnapAnimation {
-    fun start(viewPort: CalendarViewPort): Animator
+    fun start(viewPort: CalendarViewPort): AnimationPlayer
 }
 
 internal class EmptySnapAnimation: SnapAnimation {
-    override fun start(viewPort: CalendarViewPort): Animator {
-        return ValueAnimator.ofFloat(0f)
+    override fun start(viewPort: CalendarViewPort): AnimationPlayer {
+        return AndroidAnimationPlayer(ValueAnimator.ofFloat(0f))
     }
 }
 
 internal class HorizontalSnapAnimation(private val startOffset: Float,
                                        private val endOffset: Float): SnapAnimation {
 
-    override fun start(viewPort: CalendarViewPort): Animator {
+    override fun start(viewPort: CalendarViewPort): AnimationPlayer {
         val animator = ValueAnimator.ofFloat(startOffset, endOffset)
         animator.duration = 300
         animator.interpolator = AccelerateDecelerateInterpolator()
@@ -40,7 +40,7 @@ internal class HorizontalSnapAnimation(private val startOffset: Float,
         })
 
         animator.start()
-        return animator
+        return AndroidAnimationPlayer(animator)
     }
 }
 
@@ -52,7 +52,7 @@ internal class VerticalSnapAnimation(private val startOffset: Float,
     private var offset = Float.NaN
     private var height = Float.NaN
 
-    override fun start(viewPort: CalendarViewPort): Animator {
+    override fun start(viewPort: CalendarViewPort): AnimationPlayer {
         val animatorSet = AnimatorSet()
         val offsetAnimator = ValueAnimator.ofFloat(startOffset, endOffset)
         offsetAnimator.addUpdateListener { valueAnimator ->
@@ -84,7 +84,7 @@ internal class VerticalSnapAnimation(private val startOffset: Float,
         })
 
         animatorSet.start()
-        return animatorSet
+        return AndroidAnimationPlayer(animatorSet)
     }
 
     private fun tryUpdateViewPort(viewPort: CalendarViewPort) {
@@ -95,3 +95,4 @@ internal class VerticalSnapAnimation(private val startOffset: Float,
         viewPort.sendViewRequest(ViewRequest.LAYOUT)
     }
 }
+
