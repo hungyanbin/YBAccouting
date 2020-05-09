@@ -11,6 +11,12 @@ internal interface SnapAnimation {
     fun start(viewPort: CalendarViewPort, view: View): Animator
 }
 
+internal class EmptySnapAnimation: SnapAnimation {
+    override fun start(viewPort: CalendarViewPort, view: View): Animator {
+        return ValueAnimator.ofFloat(0f)
+    }
+}
+
 internal class HorizontalSnapAnimation(private val startOffset: Float,
                                        private val endOffset: Float): SnapAnimation {
 

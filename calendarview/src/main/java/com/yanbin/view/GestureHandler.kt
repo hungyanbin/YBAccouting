@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.ViewCompat
+import kotlin.math.abs
 
 internal class GestureHandler(
     private val context: Context,
@@ -12,26 +13,27 @@ internal class GestureHandler(
     private val viewPort: CalendarViewPort
 ) {
 
-    private var scrollMode = ScrollMode.IDLE
-
     @SuppressLint("ClickableViewAccessibility")
     fun bind(view: CalendarView) {
         val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
-                if (scrollMode == ScrollMode.IDLE) {
-                    if (distanceX != 0f) {
-                        scrollMode = ScrollMode.HORIZONTAL
-                    } else if(distanceY != 0f) {
-                        scrollMode = ScrollMode.VERTICAL
+                if (viewPort.direction == Direction.NON) {
+                    if (abs(distanceX) > abs(distanceY) && distanceX != 0f) {
+                        viewPort.direction = Direction.HORIZONTAL
+                    } else if(abs(distanceX) < abs(distanceY) && distanceY != 0f) {
+                        viewPort.direction = Direction.VERTICAL
                     }
                 }
 
-                if (scrollMode == ScrollMode.HORIZONTAL) {
-                    viewPort.scrollHorizontally(-distanceX)
-                    ViewCompat.postInvalidateOnAnimation(view)
-                } else if (scrollMode == ScrollMode.VERTICAL) {
-                    viewPort.resizeVertically(-distanceY)
-                    view.requestLayout()
+                when(viewPort.direction) {
+                    Direction.HORIZONTAL -> {
+                        viewPort.scrollHorizontally(-distanceX)
+                        ViewCompat.postInvalidateOnAnimation(view)
+                    }
+                    Direction.VERTICAL -> {
+                        viewPort.resizeVertically(-distanceY)
+                        view.requestLayout()
+                    }
                 }
                 return true
             }
@@ -49,11 +51,10 @@ internal class GestureHandler(
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    if (viewPort.state == ViewPortState.SCROLL_HORIZONTAL ||
-                        viewPort.state == ViewPortState.SCROLL_VERTICAL) {
+                    if (viewPort.state == ViewPortState.SCROLL) {
                         val animation = viewPort.generateSnapAnimation()
                         view.startSnapAnimation(animation)
-                        scrollMode = ScrollMode.IDLE
+                        viewPort.direction = Direction.NON
                     }
                 }
             }
@@ -62,7 +63,4 @@ internal class GestureHandler(
         }
     }
 
-    enum class ScrollMode {
-        IDLE, HORIZONTAL, VERTICAL
-    }
 }
