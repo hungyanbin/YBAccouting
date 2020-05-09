@@ -1,6 +1,10 @@
 package com.yanbin.view
 
-internal class CalendarViewPort {
+import com.yanbin.view.animation.CalendarAnimationFactory
+import com.yanbin.view.animation.SnapAnimation
+
+internal class CalendarViewPort(
+    private val calendarAnimationFactory: CalendarAnimationFactory) {
 
     var xOffset = 0f
         private set
@@ -93,16 +97,16 @@ internal class CalendarViewPort {
             Direction.HORIZONTAL -> {
                 val startOffset = xOffset
                 val endOffset = calculateHorizontalSnapOffset()
-                HorizontalSnapAnimation(startOffset, endOffset)
+                calendarAnimationFactory.horizontal(startOffset, endOffset)
             }
             Direction.VERTICAL -> {
                 val startOffset = yOffset
                 val endOffset = calculateVerticalSnapOffset()
                 val startHeight = viewHeight
                 val endHeight = calculateVerticalSnapHeight()
-                VerticalSnapAnimation(startOffset, endOffset, startHeight, endHeight)
+                calendarAnimationFactory.vertical(startOffset, endOffset, startHeight, endHeight)
             }
-            Direction.NON -> EmptySnapAnimation()
+            Direction.NON -> calendarAnimationFactory.empty()
         }
     }
 

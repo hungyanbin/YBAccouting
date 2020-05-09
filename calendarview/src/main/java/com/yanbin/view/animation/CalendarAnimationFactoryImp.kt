@@ -1,12 +1,24 @@
-package com.yanbin.view
+package com.yanbin.view.animation
 
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
+import com.yanbin.view.CalendarViewPort
+import com.yanbin.view.ViewRequest
 
-internal interface SnapAnimation {
-    fun start(viewPort: CalendarViewPort): AnimationPlayer
+internal class CalendarAnimationFactoryImp : CalendarAnimationFactory {
+    override fun empty(): SnapAnimation {
+        return EmptySnapAnimation()
+    }
+
+    override fun horizontal(startOffset: Float, endOffset: Float): SnapAnimation {
+        return HorizontalSnapAnimation(startOffset, endOffset)
+    }
+
+    override fun vertical(startOffset: Float, endOffset: Float, startHeight: Float, endHeight: Float): SnapAnimation {
+        return VerticalSnapAnimation(startOffset, endOffset, startHeight, endHeight)
+    }
 }
 
 internal class EmptySnapAnimation: SnapAnimation {
@@ -95,4 +107,3 @@ internal class VerticalSnapAnimation(private val startOffset: Float,
         viewPort.sendViewRequest(ViewRequest.LAYOUT)
     }
 }
-

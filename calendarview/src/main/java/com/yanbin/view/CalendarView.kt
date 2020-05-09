@@ -8,6 +8,9 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import com.soywiz.klock.Date
+import com.yanbin.view.animation.AnimationPlayer
+import com.yanbin.view.animation.CalendarAnimationFactoryImp
+import com.yanbin.view.animation.SnapAnimation
 
 class CalendarView : View {
 
@@ -31,8 +34,8 @@ class CalendarView : View {
     private val badgePaint = Paint()
     private val dayCellPaddingTop = 6.dp()
     private val dayCellPaddingBottom = 12.dp()
-    private val calendarRenderModel = CalendarRenderModel()
-    private val viewPort = calendarRenderModel.viewPort
+    private val viewPort = CalendarViewPort(CalendarAnimationFactoryImp())
+    private val calendarRenderModel = CalendarRenderModel(viewPort)
     private lateinit var gestureHandler: GestureHandler
     private var currentAnimator: AnimationPlayer? = null
 

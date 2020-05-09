@@ -2,9 +2,7 @@ package com.yanbin.view
 
 import com.soywiz.klock.*
 
-internal class CalendarRenderModel {
-
-    val viewPort = CalendarViewPort()
+internal class CalendarRenderModel(private val viewPort: CalendarViewPort) {
 
     var thisMonthCells: List<DayCell> = listOf()
     var nextMonthCells: List<DayCell> = listOf()
