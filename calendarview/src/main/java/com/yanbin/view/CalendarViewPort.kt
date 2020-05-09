@@ -14,6 +14,7 @@ internal class CalendarViewPort {
     private var minViewHeight = 0f
 
     private var onViewPortStateChanged: (ViewPortState) -> Unit = {}
+    private var onViewRequestEvent: (ViewRequest) -> Unit = {}
     var direction = Direction.NON
     var state = ViewPortState.IDLE
 
@@ -27,6 +28,14 @@ internal class CalendarViewPort {
 
     fun setViewPortStateListener(listener: (ViewPortState) -> Unit) {
         onViewPortStateChanged = listener
+    }
+
+    fun setViewRequestEventListenere(listener: (ViewRequest) -> Unit) {
+        onViewRequestEvent = listener
+    }
+
+    fun sendViewRequest(request: ViewRequest) {
+        onViewRequestEvent.invoke(request)
     }
 
     fun scrollHorizontally(distance: Float) {
@@ -163,4 +172,8 @@ internal enum class ViewPortState {
 
 internal enum class Direction {
     VERTICAL, HORIZONTAL, NON
+}
+
+internal enum class ViewRequest {
+    DRAW, LAYOUT
 }

@@ -1,7 +1,6 @@
 package com.yanbin.view
 
 import android.animation.Animator
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -9,8 +8,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import androidx.core.view.ViewCompat
 import com.soywiz.klock.Date
 
 class CalendarView : View {
@@ -75,6 +72,12 @@ class CalendarView : View {
         dayTextCenterOffset = textHeight/2 + dayCellPaddingTop
         selectedDayCellRadius = textHeight/2 + 5.dp()
         viewPort.setDayCellHeight(dayCellHeight)
+        viewPort.setViewRequestEventListenere { request ->
+            when(request) {
+                ViewRequest.DRAW -> postInvalidate()
+                ViewRequest.LAYOUT -> requestLayout()
+            }
+        }
 
         gestureHandler = GestureHandler(context, calendarRenderModel, viewPort)
         gestureHandler.bind(this)
@@ -84,7 +87,7 @@ class CalendarView : View {
     }
 
     internal fun startSnapAnimation(snapAnimation: SnapAnimation) {
-        currentAnimator = snapAnimation.start(viewPort, this)
+        currentAnimator = snapAnimation.start(viewPort)
     }
 
     override fun onDraw(canvas: Canvas) {
