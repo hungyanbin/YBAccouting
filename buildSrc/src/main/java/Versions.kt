@@ -9,4 +9,6 @@ object Versions {
     const val room = "2.2.5"
 
     const val koin = "2.1.5"
+
+    const val jacoco = "0.8.5"
 }

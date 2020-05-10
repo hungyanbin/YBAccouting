@@ -3,7 +3,44 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-android-extensions")
+    id("jacoco")
 }
+
+//Jacoco block
+jacoco {
+    toolVersion = Versions.jacoco
+}
+
+tasks.withType<Test> {
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+    }
+}
+
+tasks.register<JacocoReport>("jacocoUnitTestReport") {
+    dependsOn("testDebugUnitTest")
+
+    val buildDir = "build"
+    val coverageSourceDir = "src/main/java"
+    val fileFilter = arrayOf(
+        "**/domain/**",
+        "**/data/**")
+
+    val kotlinClasses = fileTree("$buildDir/tmp/kotlin-classes/debug")
+        .include(*fileFilter)
+
+    classDirectories.setFrom(files(kotlinClasses))
+    additionalSourceDirs.setFrom(files(coverageSourceDir))
+    sourceDirectories.setFrom(file(coverageSourceDir))
+    executionData.setFrom(fileTree(buildDir).include("jacoco/testDebugUnitTest.exec"))
+
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+//end Jacoco block
 
 android {
     compileSdkVersion(29)
@@ -23,6 +60,16 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+
+        getByName("debug") {
+            isTestCoverageEnabled = true
+        }
+    }
+
+    testOptions {
+        execution = "ANDROID_TEST_ORCHESTRATOR"
+        animationsDisabled = true
+        unitTests.isIncludeAndroidResources = true
     }
 
 }
