@@ -6,41 +6,10 @@ plugins {
     id("jacoco")
 }
 
-//Jacoco block
 jacoco {
     toolVersion = Versions.jacoco
 }
-
-tasks.withType<Test> {
-    configure<JacocoTaskExtension> {
-        isIncludeNoLocationClasses = true
-    }
-}
-
-tasks.register<JacocoReport>("jacocoUnitTestReport") {
-    dependsOn("testDebugUnitTest")
-
-    val buildDir = "build"
-    val coverageSourceDir = "src/main/java"
-    val fileFilter = arrayOf(
-        "**/domain/**",
-        "**/data/**")
-
-    val kotlinClasses = fileTree("$buildDir/tmp/kotlin-classes/debug")
-        .include(*fileFilter)
-
-    classDirectories.setFrom(files(kotlinClasses))
-    additionalSourceDirs.setFrom(files(coverageSourceDir))
-    sourceDirectories.setFrom(file(coverageSourceDir))
-    executionData.setFrom(fileTree(buildDir).include("jacoco/testDebugUnitTest.exec"))
-
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-//end Jacoco block
+enableJacoco("**/domain/**", "**/data/**")
 
 android {
     compileSdkVersion(29)
