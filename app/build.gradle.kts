@@ -3,13 +3,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-android-extensions")
-    id("jacoco")
 }
-
-jacoco {
-    toolVersion = Versions.jacoco
-}
-enableJacoco("**/domain/**", "**/data/**")
 
 android {
     compileSdkVersion(29)

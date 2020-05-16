@@ -1,13 +1,7 @@
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("jacoco")
 }
-
-jacoco {
-    toolVersion = Versions.jacoco
-}
-enableJacoco("**/view/**")
 
 android {
     compileSdkVersion(29)
