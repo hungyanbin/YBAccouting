@@ -3,7 +3,7 @@ name: Android Master Branch CI
 
 on:
   push:
-    branches: [feature_jacoco]
+    branches: [master]
 
 
 jobs:
