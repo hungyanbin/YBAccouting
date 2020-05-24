@@ -23,6 +23,16 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+
+        getByName("debug") {
+            isTestCoverageEnabled = true
+        }
+    }
+
+    testOptions {
+        execution = "ANDROID_TEST_ORCHESTRATOR"
+        animationsDisabled = true
+        unitTests.isIncludeAndroidResources = true
     }
 
 }
